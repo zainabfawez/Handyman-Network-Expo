@@ -27,7 +27,7 @@ const ProjectsStackSp = createNativeStackNavigator();
 
 function HomeStackScreenCli() {
   return (
-    <HomeStackCli.Navigator>
+    <HomeStackCli.Navigator >
       <HomeStackCli.Screen name="Home" component={homeCli} />
       <HomeStackCli.Screen name="Profile" component={profileSp} />
       <HomeStackCli.Screen name="Project" component={projectCli} />
@@ -98,7 +98,7 @@ function bottomTabScreenCli() {
 
 function ProjectsStackScreenSp() {
   return (
-    <ProjectsStackSp.Navigator>
+    <ProjectsStackSp.Navigator  >
       <ProjectsStackSp.Screen name="Projects" component={projectSp} />
       <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} />
     </ProjectsStackSp.Navigator>
