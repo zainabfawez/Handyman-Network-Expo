@@ -1,14 +1,30 @@
-import * as React from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButton from '../../components/MyButton';
 import { colors } from '../../constants/palette';
 import styles from "../../constants/styles";
-import { Rectangle } from 'react-native-shape';
-import { color } from 'react-native-reanimated';
+import * as Location from 'expo-location';
 
 
 export default function profileSp({navigation}) {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const onGetLocationPress = () => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      console.log(location)
+    })();
+  }
+
     return (
       <View style={styles.container}>
         <View >
@@ -23,7 +39,7 @@ export default function profileSp({navigation}) {
                   <Text style={styles.FullName}>  Full Name </Text> 
               </View>
               <View style={style.nameContainer}>
-                  <Text style={style.Sname}>  Speciality </Text> 
+                  <Text style={styles.SpName}>  Speciality </Text> 
               </View>
               <View style={styles.row}>
                 <Icon name="flag" color={colors.primary_dark} size={30}/>
@@ -59,21 +75,19 @@ export default function profileSp({navigation}) {
         <Text>Display specialist's projects</Text>
         <MyButton
             text = "go to specialist Project"
-            onPressFunction={() => {navigation.navigate('Project'); }}
+            onPressFunction={() => {navigation.navigate('projectCli'); }}
+        />
+        <MyButton
+            text = "geoloc"
+            onPressFunction={() => onGetLocationPress()}
         />
       </View>
     );
   }
 
 const style = StyleSheet.create({
-  
   nameContainer:{
     flexDirection:'row'
   },
 
-  Sname:{
-    fontSize : 20,
-    color : colors.black, 
-    marginLeft : 12,
-  }
 });

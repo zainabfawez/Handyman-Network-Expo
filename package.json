@@ -8,25 +8,32 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.9",
     "@react-native-mapbox-gl/maps": "^8.4.0",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/material-bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "axios": "^0.23.0",
     "expo": "~42.0.1",
+    "expo-location": "^13.0.4",
+    "expo-notifications": "~0.12.3",
     "expo-status-bar": "~1.0.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-image-swiper": "^0.0.8",
+    "react-native-image-viewing": "^0.2.1",
     "react-native-maps": "^0.29.3",
     "react-native-reanimated": "^2.2.3",
     "react-native-safe-area-context": "3.2.0",
     "react-native-shape": "^1.1.2",
     "react-native-snap-carousel": "^3.9.1",
-    "react-native-swiper": "^1.6.0",
-    "react-native-web": "~0.13.12"
+    "react-native-swiper": "^1.6.0-rc.3",
+    "react-native-web": "~0.13.12",
+    "react-native-web-swiper": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

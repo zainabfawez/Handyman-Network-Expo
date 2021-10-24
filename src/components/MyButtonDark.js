@@ -2,7 +2,7 @@ import React from "react";
 import {StyleSheet, Text, View, TextInput, TouchableOpacity} from "react-native";
 import { colors, shadows } from '../constants/palette';
 
-export default function MyButton(props) {
+export default function MyButtonDark(props) {
 
     return(
        
@@ -10,6 +10,7 @@ export default function MyButton(props) {
                 <View>
                     <Text  style={styles.buttonText}>
                         {props.text}
+                    
                     </Text>
                 </View>
             </TouchableOpacity>
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 7,
         paddingVertical: 20,
-        backgroundColor: colors.primary,
+        backgroundColor: colors.primary_dark,
         elevation: shadows.md.y,
         shadowColor: shadows.md.color,
         shadowOpacity: shadows.md.opacity,

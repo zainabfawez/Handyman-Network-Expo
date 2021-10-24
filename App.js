@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
 import { colors, shadows } from './src/constants/palette';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -19,7 +19,9 @@ import settingSp from './src/screens/specialistScreens/settingSp';
 import chatSp from './src/screens/specialistScreens/chatSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+//n2ebre zabte l names bl navigations
 const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
 const HomeStackCli = createNativeStackNavigator();
@@ -28,27 +30,27 @@ const ProjectsStackSp = createNativeStackNavigator();
 function HomeStackScreenCli() {
   return (
     <HomeStackCli.Navigator >
-      <HomeStackCli.Screen name="Home" component={homeCli} />
-      <HomeStackCli.Screen name="Profile" component={profileSp} />
-      <HomeStackCli.Screen name="Project" component={projectCli} />
+      <HomeStackCli.Screen name="HomeCli" component={homeCli} options={{ headerShown: false,}} />
+      <HomeStackCli.Screen name="ProfileSp" component={profileSp} options={{title: 'Profile'}} />
+      <HomeStackCli.Screen name="projectCli" component={projectCli} options={{title: 'Project'}} />
     </HomeStackCli.Navigator>
   );
 }
 
 function bottomTabScreenCli() {
   return (
-    <TabCli.Navigator  screenOptions={{ headerShown: false }} tabBarOptions={{
-      activeTintColor: colors.primary_dark,
-      inactiveTintColor: colors.background,
-      showLabel: true,
-      allowFontScaling: false,
-      keyboardHidesTabBar: true,
-      shadowColor: '#FFF',
-      labelStyle: {
+    <TabCli.Navigator  screenOptions={{ headerShown: false,
+      tabBarActiveTintColor: colors.primary_dark,
+      tabBarInactiveTintColor: colors.background,
+      tabBarShowLabel: true,
+      tabBarAllowFontScaling: false,
+      tabBarKeyboardHidesTabBar: true,
+      tabBarShadowColor: '#FFF',
+      tabBarLabelStyle: {
         fontWeight: "bold",
         fontSize: 10,
       },}}>
-        <TabCli.Screen name="Home" component={HomeStackScreenCli}  options={{
+        <TabCli.Screen name="HomeStack" component={HomeStackScreenCli}  options={{
             title: 'Home',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -59,7 +61,7 @@ function bottomTabScreenCli() {
               />
             ),
           }} />
-        <TabCli.Screen name="Chat" component={chatCli}  options={{
+        <TabCli.Screen name="ChatCli" component={chatCli}  options={{
             title: 'Chat',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -70,7 +72,7 @@ function bottomTabScreenCli() {
               />
             ),
           }} />
-        <TabCli.Screen name="What's new" component={whatNewCli} options={{
+        <TabCli.Screen name="WhatNewCli" component={whatNewCli} options={{
             title: 'Tips',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -81,7 +83,7 @@ function bottomTabScreenCli() {
               />
             ),
           }} />
-        <TabCli.Screen name="Setting" component={settingCli}  options={{
+        <TabCli.Screen name="SettingCli" component={settingCli}  options={{
             title: 'Setting',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -118,7 +120,7 @@ function bottomTabScreenSp() {
         fontWeight: "bold",
         fontSize: 10,
       },}}>
-        <TabSp.Screen name="Projects" component={ProjectsStackScreenSp}  options={{
+        <TabSp.Screen name="ProjectsStack" component={ProjectsStackScreenSp}  options={{
             title: 'Projects',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -129,7 +131,7 @@ function bottomTabScreenSp() {
               />
             ),
           }}  />
-        <TabSp.Screen name="Chat" component={chatSp}  options={{
+        <TabSp.Screen name="ChatSp" component={chatSp}  options={{
             title: 'Chat',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -140,7 +142,7 @@ function bottomTabScreenSp() {
               />
             ),
           }} />
-        <TabSp.Screen name="Setting" component={settingSp}  options={{
+        <TabSp.Screen name="SettingSp" component={settingSp}  options={{
             title: 'Setting',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -157,16 +159,45 @@ function bottomTabScreenSp() {
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-  return (
-    <NavigationContainer>
-     <Stack.Navigator initialRouteName = "Login">
-      <Stack.Screen name="Login" component={login} />
-      <Stack.Screen name="Signup" component={signup} />
-      <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
-      <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
-    </Stack.Navigator>
-    </NavigationContainer>
-  );
+  const [initialRoute, setInitialRoute] = useState(null)
+
+  useEffect(() => {
+     AsyncStorage.getItem('token')
+    .then(token => {
+      if (token){
+        AsyncStorage.getItem('role')
+        .then(role => {
+          if (role == "specialist"){
+            setInitialRoute("BottomTabSp")
+          } else {
+            setInitialRoute("BottomTabCli")
+          }
+        })        
+      } else {
+        setInitialRoute("Login")
+      }
+    })
+  }, [initialRoute]);
+  
+  if (!initialRoute){
+    return(
+      <View>
+        <Text>loading...</Text>
+      </View>
+    )
+  }
+  else {
+    return (
+      <NavigationContainer>
+       <Stack.Navigator initialRouteName = {initialRoute}>
+        <Stack.Screen name="Login" component={login} />
+        <Stack.Screen name="Signup" component={signup} />
+        <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
+        <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
+      </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

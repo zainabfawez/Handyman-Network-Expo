@@ -43,5 +43,11 @@ export default StyleSheet.create({
         borderBottomWidth: 1,
         margin : 15,
     },
+
+    SpName:{
+        fontSize : 20,
+        color : colors.black, 
+        marginLeft : 12,
+      }
     
 });
