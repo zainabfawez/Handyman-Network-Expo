@@ -4,26 +4,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButton from '../../components/MyButton';
 import { colors } from '../../constants/palette';
 import styles from "../../constants/styles";
-import * as Location from 'expo-location';
+
 
 
 export default function profileSp({navigation}) {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-
-  const onGetLocationPress = () => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log(location)
-    })();
-  }
+  
 
     return (
       <View style={styles.container}>
@@ -77,10 +62,7 @@ export default function profileSp({navigation}) {
             text = "go to specialist Project"
             onPressFunction={() => {navigation.navigate('projectCli'); }}
         />
-        <MyButton
-            text = "geoloc"
-            onPressFunction={() => onGetLocationPress()}
-        />
+     
       </View>
     );
   }

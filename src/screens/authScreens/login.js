@@ -27,6 +27,8 @@ export default function login({ navigation }) {
       await AsyncStorage.setItem('role', res.data['user']['is_specialist']?"specialist":"client");
       setidBadCredentials(null);
       if (res.data['user']['is_specialist']){
+        //request api get profile
+        //if empty got to add profile else :
         navigation.navigate('BottomTabSp');
         navigation.reset({
           index: 0,
@@ -89,7 +91,7 @@ export default function login({ navigation }) {
             <TouchableOpacity style={style.loginButton}  onPress = {pressLogin} >
               <Text style={style.loginButtonText}>Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {navigation.navigate('Signup'); }}>
+            <TouchableOpacity onPress={() => {navigation.navigate('Register'); }}>
               <Text style={style.registerText}>
                 Don't have an account? Register Now
               </Text>
@@ -103,10 +105,7 @@ export default function login({ navigation }) {
     }
     
     const style = StyleSheet.create({
-      container: {
-        flex: 1,
-        position: 'relative',
-      },
+    
       bigCircle: {
         width: Dimensions.get('window').height * 0.7,
         height: Dimensions.get('window').height * 0.7,

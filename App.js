@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
 import chatCli from './src/screens/clientScreens/chatCli';
 import homeCli from './src/screens/clientScreens/homeCli';
 import profileSp from './src/screens/clientScreens/profileSp';
@@ -19,9 +20,11 @@ import settingSp from './src/screens/specialistScreens/settingSp';
 import chatSp from './src/screens/specialistScreens/chatSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
+import addProfile from './src/screens/specialistScreens/addProfile';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-//n2ebre zabte l names bl navigations
+
 const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
 const HomeStackCli = createNativeStackNavigator();
@@ -168,6 +171,7 @@ export default function App() {
         AsyncStorage.getItem('role')
         .then(role => {
           if (role == "specialist"){
+            //api call to get profile if empty set initial route addprofile else
             setInitialRoute("BottomTabSp")
           } else {
             setInitialRoute("BottomTabCli")
@@ -191,7 +195,8 @@ export default function App() {
       <NavigationContainer>
        <Stack.Navigator initialRouteName = {initialRoute}>
         <Stack.Screen name="Login" component={login} />
-        <Stack.Screen name="Signup" component={signup} />
+        <Stack.Screen name="Register" component={signup} />
+        <Stack.Screen name="AddProfile" component={addProfile} />
         <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
         <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
       </Stack.Navigator>
