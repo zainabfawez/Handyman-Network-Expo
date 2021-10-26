@@ -19,6 +19,7 @@ import signup from './src/screens/authScreens/signup';
 import settingSp from './src/screens/specialistScreens/settingSp';
 import chatSp from './src/screens/specialistScreens/chatSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
+import displayPhotos from './src/screens/specialistScreens/displayPhotos';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
 import addProfile from './src/screens/specialistScreens/addProfile';
 
@@ -106,20 +107,22 @@ function ProjectsStackScreenSp() {
     <ProjectsStackSp.Navigator  >
       <ProjectsStackSp.Screen name="Projects" component={projectSp} />
       <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} />
+      <ProjectsStackSp.Screen name="Photos" component={displayPhotos} />
     </ProjectsStackSp.Navigator>
   );
 }
 
 function bottomTabScreenSp() {
   return (
-    <TabSp.Navigator  screenOptions={{ headerShown: false}}  tabBarOptions={{
-      activeTintColor: colors.primary_dark,
-      inactiveTintColor: colors.background,
-      showLabel: true,
-      allowFontScaling: false,
-      keyboardHidesTabBar: true,
-      shadowColor: '#FFF',
-      labelStyle: {
+    <TabSp.Navigator  screenOptions={{ 
+      headerShown: false,
+      tabBarActiveTintColor: colors.primary_dark,
+      tabBarInactiveTintColor: colors.background,
+      tabBarShowLabel: true,
+      tabBarAllowFontScaling: false,
+      tabBarKeyboardHidesTabBar: true,
+      tabBarShadowColor: '#FFF',
+      tabBarLabelStyle: {
         fontWeight: "bold",
         fontSize: 10,
       },}}>

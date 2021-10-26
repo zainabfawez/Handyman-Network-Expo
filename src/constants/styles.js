@@ -41,7 +41,7 @@ export default StyleSheet.create({
     HorizontalLine:{
         borderBottomColor:  '#909090',
         borderBottomWidth: 1,
-        margin : 15,
+        margin : 5,
     },
 
     SpName:{
