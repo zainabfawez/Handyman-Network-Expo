@@ -24,8 +24,6 @@ export default function login({ navigation }) {
       });
       await AsyncStorage.setItem('token', res.data['access_token']);
       await AsyncStorage.setItem('fullName', res.data['user']['first_name'] + ' ' + res.data['user']['last_name']);
-      await AsyncStorage.setItem('longitude', res.data['user']['longitude']);
-      await AsyncStorage.setItem('latitude', res.data['user']['latitude']);
       await AsyncStorage.setItem('role', res.data['user']['is_specialist']?"specialist":"client");
       setidBadCredentials(null);
       if (res.data['user']['is_specialist']){

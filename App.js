@@ -19,7 +19,7 @@ import signup from './src/screens/authScreens/signup';
 import settingSp from './src/screens/specialistScreens/settingSp';
 import chatSp from './src/screens/specialistScreens/chatSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
-import displayPhotos from './src/screens/specialistScreens/displayPhotos';
+import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
 import addProfile from './src/screens/specialistScreens/addProfile';
 
@@ -107,7 +107,7 @@ function ProjectsStackScreenSp() {
     <ProjectsStackSp.Navigator  >
       <ProjectsStackSp.Screen name="Projects" component={projectSp} />
       <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} />
-      <ProjectsStackSp.Screen name="Photos" component={displayPhotos} />
+      <ProjectsStackSp.Screen name="PhotosSp" component={displayPhotosSp}   options={{title: 'Photos'}}/>
     </ProjectsStackSp.Navigator>
   );
 }

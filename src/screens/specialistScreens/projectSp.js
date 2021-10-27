@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { Text, View, Image, ScrollView, Platform, Button, Alert, Modal, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MyButton from '../../components/MyButton';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
 import styles from "../../constants/styles";
@@ -10,7 +9,7 @@ import DisplayProjects from '../../components/DisplayProjects';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import Swiper from "react-native-web-swiper";
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,9 +22,9 @@ Notifications.setNotificationHandler({
 
 export default function projectSp({navigation}) {
 
-  //for modals
+  //for modal
   const [modalTipVisible, setModalTipVisible] = useState(false);
-  const [modalPhotoVisible, setModalPhotoVisible] = useState(false);
+
 
   //for push notifications
   const [expoPushToken, setExpoPushToken] = useState('');

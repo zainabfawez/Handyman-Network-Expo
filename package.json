@@ -28,6 +28,8 @@
     "react-native-image-swiper": "^0.0.8",
     "react-native-image-viewing": "^0.2.1",
     "react-native-maps": "^0.29.3",
+    "react-native-phone-call": "^1.0.9",
+    "react-native-ratings": "^8.1.0",
     "react-native-reanimated": "^2.2.3",
     "react-native-safe-area-context": "3.2.0",
     "react-native-shape": "^1.1.2",

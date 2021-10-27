@@ -9,8 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function addProjectSp({navigation}) {
     const [selectedCurrency, setSelectedCurrency] = useState('USD');
-   
-
+    
     return (
       <View style={styles.container}>
       
