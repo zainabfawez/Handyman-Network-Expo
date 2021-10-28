@@ -38,7 +38,7 @@ export default function homeCli({navigation}) {
         //console.log(response.data);
       }
     }catch(e) {
-          console.log("e");
+          console.log("error");
           
       }
   }
@@ -54,7 +54,7 @@ export default function homeCli({navigation}) {
         justifyContent: 'center', 
       }}>
           
-          <ActivityIndicator size='large' color={Colors.primary}/>
+          <ActivityIndicator size='large' color={colors.primary}/>
       </View>
     
 
@@ -85,7 +85,9 @@ export default function homeCli({navigation}) {
                 <Text>description</Text>
               </View>
             </Callout>
+
           </Marker>
+          
         </MapView>
         <View style={{ position: 'absolute', top: 10, width: '100%' }}>
           <TextInput

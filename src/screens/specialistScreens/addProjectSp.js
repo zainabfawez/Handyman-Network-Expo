@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function addProjectSp({navigation}) {
-    const [selectedCurrency, setSelectedCurrency] = useState('USD');
+    const [selectedCurrency, setSelectedCurrency] = useState(null);
     
     return (
       <View style={styles.container}>
@@ -54,7 +54,6 @@ export default function addProjectSp({navigation}) {
               <Text style={[style.inputLabel,{paddingTop:10}]}>Currency</Text>
               <Picker 
                 style = {{ marginVertical: 10}}
-                placeholder = 'USD'
                 placeholderTextColor = {colors.text}
                 selectedValue = {selectedCurrency}
                 onValueChange={(itemValue, itemIndex) =>

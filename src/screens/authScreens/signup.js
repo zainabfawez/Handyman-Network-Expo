@@ -24,7 +24,7 @@ export default function signup({ navigation }) {
 
    //for getting th current location
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+ 
 
   const onGetLocationPress = () => {
 
@@ -72,14 +72,20 @@ export default function signup({ navigation }) {
           "expoPushNotificationToken" : pushNotificationToken,
           
         }).then((response)=> {
-            console.log(response);
-          //navigation.navigate('Login');
-          //if (specialist){
-            //navigate to add profile then to buttom sp 
-          //else if client naviagte to bottom tab sp
-
-        })
-        
+            if(response.data['user']['is_specialist']){
+              navigation.navigate('AddProfile');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'AddProfile' }],
+                });
+            }else{
+              navigation.navigate('BottomTabCli');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'BottomTabCli' }],
+                });
+            }  
+        }) 
       } catch(err) {
         setidBadCredentials("Check your informations");
       }
@@ -87,7 +93,7 @@ export default function signup({ navigation }) {
       setidBadCredentials("Please fill every required field!");
       
     }
-    };
+  };
 
   return (
    
@@ -166,7 +172,7 @@ export default function signup({ navigation }) {
           </View>
 
           <MyButton
-            text = "geoloc"
+            text = "Get current Location"
             onPressFunction={() => onGetLocationPress()}
           />
           <View style={style.checkboxContainer}>

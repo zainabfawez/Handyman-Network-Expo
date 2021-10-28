@@ -15,6 +15,9 @@ export default function login({ navigation }) {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [bad_credentials, setidBadCredentials] = useState(null);
+  const [profile, setProfile] = useState(null);
+
+  
 
   const pressLogin = async () => {
     try {
@@ -27,13 +30,32 @@ export default function login({ navigation }) {
       await AsyncStorage.setItem('role', res.data['user']['is_specialist']?"specialist":"client");
       setidBadCredentials(null);
       if (res.data['user']['is_specialist']){
-        //request api get profile
-        //if empty got to add profile else :
-        navigation.navigate('BottomTabSp');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'BottomTabSp' }],
-          });
+        //geting profile of specialist, if empty navigate to Add profile
+        // async () =>{
+        //   try {
+        //     const response = await  axios.get(`${BASE_API_URL}/api/getprofile`, 
+        //     {headers:{
+        //       'Authorization' : `Bearer ${res.data['access_token']}`
+        //     }}
+        //     );
+           
+        //     if(!response.data){
+        //       navigation.navigate('AddProfile');
+        //       console.log("fe profile");
+        //     }else{
+              navigation.navigate('BottomTabSp');
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'BottomTabSp' }],
+              });
+          //     console.log('ma fe profile');
+
+          //   }
+          // }catch(e) {
+          //       console.log("error");    
+          //   }
+        
+        //}
       }else{
         navigation.navigate('BottomTabCli');
         navigation.reset({

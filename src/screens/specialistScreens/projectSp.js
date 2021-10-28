@@ -64,13 +64,15 @@ export default function projectSp({navigation}) {
             <Text style={{marginLeft: 25, fontSize: 16}}> 3.5 <Icon name="star" color={colors.gold} size={30}/> </Text> 
           </View>
         </View>
-        <ScrollView>
-          {/* //call Api to display projects and their Photos */}
-          <DisplayProjects name = "project 1" description = "Project about carpenting" onPressFunction = {() =>{ navigation.navigate('Photos'); }}/>
-        </ScrollView>
+        <View style={{marginTop: 20}}>
+          <ScrollView style={{}}>
+            {/* //call Api to display projects and their Photos */}
+            <DisplayProjects name = "project 1" description = "Project about carpenting" onPressFunction = {() =>{ navigation.navigate('Photos'); }}/>
+          </ScrollView>
 
+        </View>
+        
       
-
 
         {/* Modal to add a tip */}
         <View style={style. centeredView}>
@@ -106,7 +108,10 @@ export default function projectSp({navigation}) {
                                 />
                                 <MyButtonDark
                                     text = "save"
-                                    onPressFunction = {() => setModalTipVisible(false)}
+                                    onPressFunction = {() =>  setModalTipVisible(false)}
+                                    onPressFunction = {async () => {
+                                      await sendPushNotification(expoPushToken);
+                                    }}
                                 />
           
                             </View>

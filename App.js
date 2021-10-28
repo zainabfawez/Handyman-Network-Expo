@@ -1,12 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
+
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import { colors, shadows } from './src/constants/palette';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import chatCli from './src/screens/clientScreens/chatCli';
 import homeCli from './src/screens/clientScreens/homeCli';
@@ -23,13 +25,14 @@ import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
 import addProfile from './src/screens/specialistScreens/addProfile';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
+
+
 
 const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
 const HomeStackCli = createNativeStackNavigator();
 const ProjectsStackSp = createNativeStackNavigator();
+
 
 function HomeStackScreenCli() {
   return (
@@ -105,12 +108,13 @@ function bottomTabScreenCli() {
 function ProjectsStackScreenSp() {
   return (
     <ProjectsStackSp.Navigator  >
-      <ProjectsStackSp.Screen name="Projects" component={projectSp} />
+      <ProjectsStackSp.Screen name="Projects" component={projectSp}  />
       <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} />
       <ProjectsStackSp.Screen name="PhotosSp" component={displayPhotosSp}   options={{title: 'Photos'}}/>
     </ProjectsStackSp.Navigator>
   );
 }
+
 
 function bottomTabScreenSp() {
   return (
@@ -188,8 +192,12 @@ export default function App() {
   
   if (!initialRoute){
     return(
-      <View>
-        <Text>loading...</Text>
+      <View  style={{
+        flex: 1, 
+        alignItems: 'center',
+        justifyContent: 'center', 
+      }}>
+          <ActivityIndicator size='large' color={colors.primary}/>
       </View>
     )
   }
@@ -199,7 +207,7 @@ export default function App() {
        <Stack.Navigator initialRouteName = {initialRoute}>
         <Stack.Screen name="Login" component={login} />
         <Stack.Screen name="Register" component={signup} />
-        <Stack.Screen name="AddProfile" component={addProfile} />
+        <Stack.Screen name="AddProfile" component={addProfile} options={{title:"Add Profile"}}/>
         <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
         <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
       </Stack.Navigator>
