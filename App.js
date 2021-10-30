@@ -25,9 +25,6 @@ import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
 import addProfile from './src/screens/specialistScreens/addProfile';
 
-
-
-
 const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
 const HomeStackCli = createNativeStackNavigator();
@@ -109,8 +106,8 @@ function ProjectsStackScreenSp() {
   return (
     <ProjectsStackSp.Navigator  >
       <ProjectsStackSp.Screen name="Projects" component={projectSp}  />
-      <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} />
-      <ProjectsStackSp.Screen name="PhotosSp" component={displayPhotosSp}   options={{title: 'Photos'}}/>
+      <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} options={{title: 'Add New Project'}} />
+      <ProjectsStackSp.Screen name="Photos" component={displayPhotosSp}   options={{title: 'Photos'}}/>
     </ProjectsStackSp.Navigator>
   );
 }

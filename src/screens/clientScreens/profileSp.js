@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput } from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -7,12 +7,18 @@ import { colors } from '../../constants/palette';
 import styles from "../../constants/styles";
 import { Rating } from 'react-native-ratings';
 import call from 'react-native-phone-call';
+import axios from 'axios';
+import BASE_API_URL from '../../services/BaseUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Card } from 'react-native-elements';
 
 
 export default function profileSp({navigation}) {
 
   const [modalRateVisible, setModalRateVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('+96170027217');
+  const [profile, setprofile] = useState(null);
+  const [info, setInfo] = useState(null);
 
   const triggerCall = () => {
     // Check for perfect 12 digit length
@@ -28,7 +34,49 @@ export default function profileSp({navigation}) {
     // Make a call
     call(args).catch(console.error);
   };
+
+  const getSpecialistInfo = async () => {
+    const responseInfo = await  axios.get(`${BASE_API_URL}/api/get-user?id=1`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
   
+    );
+    console.log(responseInfo.data);
+    setInfo(responseInfo.data);  
+  }
+
+  const getSpecialistProfile = async () => {
+    const responseProfile = await  axios.get(`${BASE_API_URL}/api/get-profile?specialist_id=1`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
+     
+    );
+    console.log(responseProfile.data);
+    setprofile(responseProfile.data);  
+  }
+
+  useEffect(() => {
+    getSpecialistProfile();
+    getSpecialistInfo();
+    }, [])
+
+  
+    // if (!profile){
+    //   return (
+    //     <View  style={{
+    //       flex: 1, 
+    //       alignItems: 'center',
+    //       justifyContent: 'center', 
+    //     }}>
+            
+    //         <ActivityIndicator size='large' color={colors.primary}/>
+    //     </View>
+      
+  
+    //   );
+    // }else{
 
     return (
       <View style={styles.container}>
@@ -41,7 +89,7 @@ export default function profileSp({navigation}) {
                 {/* Full name and Speciality and Info*/}
             <View style={{marginLeft: 15}}>
               <View style={style.nameContainer}>
-                  <Text style={styles.FullName}>  Full Name </Text> 
+                  <Text style={styles.FullName}>Full Name </Text> 
               </View>
               <View style={style.nameContainer}>
                   <Text style={styles.SpName}>  Speciality </Text> 
@@ -53,9 +101,9 @@ export default function profileSp({navigation}) {
                 <Icon name="star" color={colors.gold} size={20} />
               </View>
             </View>
-            
           </View>
-          <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15},styles.row]}>
+
+          <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
             {/* allow calling from react native */}
             <TouchableOpacity>
                 <View>
@@ -75,16 +123,46 @@ export default function profileSp({navigation}) {
                 </View>
             </TouchableOpacity>
           </View>
+
+        </View>
+        
+        <View  style={style.proj}>
+          <Text style={style.projText}>Projects</Text>
+        </View>
+         
+       <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} >
+
+         <Card>
+          <View style={{flexDirection:'row'}}>
+            <Text style={[styles.FullName, {fontSize:18, marginRight:30}]}>Project name</Text>
+            <TouchableOpacity  onPress ={() => {navigation.navigate('projectCli'); }}>
+              <Icon  name="chevron-double-right" color={colors.text} size={50} />
+            </TouchableOpacity>
+          </View>
+         </Card>
+
+         
+      
+
+       </ScrollView>
+
+       <View  style={style.proj}>
+          <Text style={style.projText}>Reviews from other Clients</Text>
         </View>
 
-       <ScrollView >
-         <View style={{flexDirection:'row', justifyContent: "space-around"}}>
-          <Text style={[styles.FullName, {fontSize:20}]}>Project name</Text>
-          <TouchableOpacity  onPress ={() => {navigation.navigate('projectCli'); }}>
-            <Icon style= {{marginTop:10}} name="arrow-right-thick" color={colors.primary_dark} size={40} />
-          </TouchableOpacity>
-         </View>
+        <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true}>
+          <Card>
+            <View >
+              <Text style={{flexWrap:'wrap'}}>
+                It was amazing to work with him, he is so talented, bla bla bla bla bla
+              </Text>
+            </View>
+          </Card>
+
+         
        </ScrollView>
+
+
 
          {/* Modal to rate a specilist  */}
          <View style={style. centeredView}>
@@ -120,7 +198,7 @@ export default function profileSp({navigation}) {
                             {/* adding a review */}
                             <Text> Add a review:</Text>
                             <TextInput 
-                                style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'},]} 
+                                style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
                                 multiline={true}
                                 placeholder={"You're review goes here"}
                                 placeholderTextColor= {colors.disabled_text}
@@ -147,8 +225,8 @@ export default function profileSp({navigation}) {
         
       </View>
     );
-  }
-
+  //}
+}
 const style = StyleSheet.create({
   nameContainer:{
     flexDirection:'row'
@@ -166,6 +244,7 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(252,252,252,0.8)',
 
   },
 
@@ -180,10 +259,24 @@ const style = StyleSheet.create({
     shadowOffset: {
       width:0,
       height: 5,
-    }
+    },
   },
 
+  proj:{
+    padding: 10,
+    borderWidth:1,
+    marginBottom:20,
+    marginTop:10,
+    marginHorizontal:5,
+    borderColor: colors.disabled_text,
+    borderRadius:6,
+    backgroundColor: colors.disabled_text,
+  },
 
+  projText:{
+    fontSize: 20,
+    fontWeight: 'bold',
 
+  },
  
 });

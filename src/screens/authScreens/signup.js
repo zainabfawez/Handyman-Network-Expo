@@ -25,16 +25,13 @@ export default function signup({ navigation }) {
    //for getting th current location
   const [location, setLocation] = useState(null);
  
-
   const onGetLocationPress = () => {
-
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
       await Location.getCurrentPositionAsync({})
       .then((location)=>{
         setLocation(location)
@@ -43,12 +40,8 @@ export default function signup({ navigation }) {
     })();
   }
   
-
-  
   const pressRegister = async() => {
-   
     if(firstName && lastName && email && password && cpassword && location){
-      
       if(isSelected){
         setIsSpecialist(1);
       }else{

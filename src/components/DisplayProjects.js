@@ -9,15 +9,18 @@ export default function DisplayProjects(props) {
 
     return(
         <View style = {style.Container}>
-            <View style={{flexDirection:"row"}} >
+          
                 <TouchableOpacity  onPress={props.onPressFunction}>
-                    <Icon name="image-multiple-outline" size={60} color = {colors.primary_dark}/>
+                    <View style={{flexDirection:"row"}} >
+                        <Icon name="image-multiple-outline" size={60} color = {colors.text}/>
+                        <View style={{marginLeft:10}}>
+                            <Text style = {style.name}>{props.name}</Text>
+                            <Text style = {style.description}>{props.description}</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
-                <View>
-                    <Text style = {style.name}>{props.name}</Text>
-                    <Text style = {style.description}>{props.description}</Text>
-                </View>
-            </View>
+           
+            
             <View style = {styles.HorizontalLine}></View>
         </View>
     ); 
@@ -26,7 +29,7 @@ export default function DisplayProjects(props) {
 
 const style = StyleSheet.create({
     Container:{
-        padding : 10,
+        padding : 20,
     },
 
     name: {

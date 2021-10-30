@@ -12,6 +12,10 @@ export default function settingSp({navigation}) {
   const logout = async() => {
     AsyncStorage.clear();
     navigation.navigate('Login');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+      });
  
   }
     return (

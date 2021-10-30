@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
 import styles from "../../constants/styles";
 import MyButton from '../../components/MyButton';
 import CountryPicker from 'react-native-country-picker-modal';
@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from "../../constants/palette";
 import {Picker} from '@react-native-picker/picker';
 import InputSpinner from "react-native-input-spinner";
-//import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 
 export default function addProfile({navigation}) {
@@ -30,13 +29,13 @@ export default function addProfile({navigation}) {
           <View style= {styles.HorizontalLine}></View>
 
           <View style ={[styles.row, {justifyContent: "space-between"}]}>
-            <Text style={{fontSize: 18}}> Add Profile Picture</Text>
+            <Text style={{fontSize: 15}}> Add Profile Picture</Text>
             <TouchableOpacity>
-              <Icon name="add-photo-alternate" size={50} color={colors.black}/>
+              <Icon name="add-photo-alternate" size={70} color={colors.text}/>
             </TouchableOpacity>
           </View>
           
-          <Text style={ {marginLeft:10, fontSize: 18}}>Nationality:</Text>
+          <Text style={ {marginLeft:10, fontSize: 15}}>Nationality:</Text>
           <TouchableOpacity>
             <View style={style.box} >
             
@@ -71,8 +70,9 @@ export default function addProfile({navigation}) {
             </Picker>
           </View>
 
-          <View style= {{justifyContent:'space-between'}}>
+          <View style= {{justifyContent:'space-between', }}>
             <Text style= {style.attribute}> Experience (in years):</Text>
+            <View style={{marginTop:5}}>
             <InputSpinner
               max={100}
               min={1}
@@ -85,20 +85,25 @@ export default function addProfile({navigation}) {
               //   console.log(num);
               //}}
             />
+            </View>
           </View>
 
-            <View>
+          <View style={{flexDirection:'row'}}>
+            <View style={{'flex':0.5}}>
               <Text style={style.attribute}>Price per hour:</Text>
               <View style={style.box}>
                 <TextInput
                     placeholder="10"
                     placeholderTextColor= {colors.disabled_text}
+                    keyboardType='numeric'
                 />
               </View>
+              
             </View>
             
-            <Text style= {style.attribute}> Currency:</Text>
-            <View>
+           
+            <View style={{'flex':0.5 }}>
+              <Text style= {style.attribute}> Currency:</Text>
               <Picker 
                 style = {{ marginVertical: 10, marginHorizontal:10}}
                 placeholderTextColor = {colors.disabled_text}
@@ -110,6 +115,8 @@ export default function addProfile({navigation}) {
                 <Picker.Item label="LBP" value="LBP" />
               </Picker>
             </View>
+
+          </View>
 
          </ScrollView>
        
@@ -156,7 +163,7 @@ const style = StyleSheet.create({
   
   attribute:{
     marginLeft:10, 
-    fontSize: 18,
+    fontSize: 15,
     marginTop: 12,
   }
 });

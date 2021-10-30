@@ -8,7 +8,7 @@ import { colors } from '../../constants/palette';
 import DisplayProjects from '../../components/DisplayProjects';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+
 
 
 Notifications.setNotificationHandler({
@@ -61,13 +61,29 @@ export default function projectSp({navigation}) {
           <View >
             <Text style={styles.FullName}>  Full Name </Text> 
             <Text style={styles.SpName}>  Speciality </Text> 
-            <Text style={{marginLeft: 25, fontSize: 16}}> 3.5 <Icon name="star" color={colors.gold} size={30}/> </Text> 
+            <Text style={{marginLeft: 25, fontSize: 16}}> 
+              3.5 
+              <Icon 
+                name="star" 
+                color={colors.gold} 
+                size={30}
+              /> 
+            </Text> 
           </View>
         </View>
         <View style={{marginTop: 20}}>
-          <ScrollView style={{}}>
+
+        <View  style={style.proj}>
+          <Text style={style.projText}>Projects</Text>
+        </View>
+         
+          <ScrollView >
             {/* //call Api to display projects and their Photos */}
-            <DisplayProjects name = "project 1" description = "Project about carpenting" onPressFunction = {() =>{ navigation.navigate('Photos'); }}/>
+            <DisplayProjects 
+              name = "project 1" 
+              description = "Project about carpenting" 
+              onPressFunction = {() =>{ navigation.navigate('Photos'); }}
+              />
           </ScrollView>
 
         </View>
@@ -81,7 +97,8 @@ export default function projectSp({navigation}) {
                 transparent={true}
                 visible={modalTipVisible}
             >
-                <View style={[style.centeredView, { marginTop: -200 }]}>
+              
+                <View style={[style.centeredView, { marginTop: -200, }]}>
                     <View style={style.modalView}>
                         <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
                             <Text> Add a Tip About Your speciality </Text>
@@ -115,24 +132,31 @@ export default function projectSp({navigation}) {
                                 />
           
                             </View>
+                          
                            
                         </View>
                     </View>
                 </View>
+              
             </Modal>
         </View>
 
 
 
-        <View style={{flexDirection: "row", justifyContent : "space-around"}}>
-          <MyButtonDark
-              text = "new Project"
-              onPressFunction = {() =>{ navigation.navigate('AddNewProject'); }}
-          />
-          <MyButtonDark
+        <View style={{flexDirection: "row", justifyContent : "space-around",}}>
+          <View style={{"flex":0.5, margin :15}}>
+            <MyButtonDark
+                text = "new Project"
+                onPressFunction = {() =>{ navigation.navigate('AddNewProject'); }}
+            />
+          </View>
+          <View  style={{"flex":0.5, margin:15}}>
+            <MyButtonDark
               text = "new Tip"
               onPressFunction = {() => setModalTipVisible(true)}
-          />
+            />
+          </View>
+         
           
         </View>
         {/* // move this function to when the user add a tip
@@ -212,8 +236,12 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(252,252,252,0.8)',
 
   },
+
+  
+ 
 
   modalView: {
     width: '90%',
@@ -227,6 +255,24 @@ const style = StyleSheet.create({
       width:0,
       height: 5,
     }
+  },
+
+  
+  proj:{
+    padding: 10,
+    borderWidth:1,
+    marginBottom:20,
+    marginTop:10,
+    borderColor: colors.disabled_text,
+    borderRadius:6,
+    marginHorizontal:5,
+    backgroundColor: colors.disabled_text,
+  },
+
+  projText:{
+    fontSize: 20,
+    fontWeight: 'bold',
+
   },
 
 
