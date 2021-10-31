@@ -26,7 +26,6 @@ export default function homeCli({navigation}) {
       );
       setClient(responseProfile.data);
     }catch(e) {
-      //console.log(responseProfile.data);
           console.log("error");         
       }
   }
@@ -38,7 +37,6 @@ export default function homeCli({navigation}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
     );
-    //console.log(responseSpecialists.data);
     setSpecialists(responseSpecialists.data);  
   }
 
@@ -55,7 +53,6 @@ export default function homeCli({navigation}) {
   }else{
 
     return (
-      //console.log(specialists),
       <View style={style.container}> 
         <MapView
           showsUserLocation

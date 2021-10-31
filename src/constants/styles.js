@@ -22,7 +22,7 @@ export default StyleSheet.create({
         fontSize : 25,
         fontWeight : "bold",
         color : colors.black,
-        padding : 10,
+        padding : 5,
       },
 
     row: {
@@ -30,7 +30,7 @@ export default StyleSheet.create({
         alignItems: "center",
         marginBottom: 10,
         justifyContent: "space-between",
-        paddingTop: 10
+        paddingTop: 10,
     },
 
     VerticleLine: {

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput} from 'react-native';
+import React, {useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -12,6 +12,8 @@ import BASE_API_URL from '../../services/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from 'react-native-elements';
 import Loading from '../../components/loading';
+import Animated from 'react-native-reanimated';
+import BottomSheet from 'reanimated-bottom-sheet';
 
 
 export default function profileSp({navigation, route}) {
@@ -24,6 +26,12 @@ export default function profileSp({navigation, route}) {
   const [info, setInfo] = useState(null);
   const [rating, setRating] = useState(null);
   const [projects, setProjects] = useState(null);
+  const [comments, setComments] = useState(null);
+  const sheetRef = React.useRef(null);
+
+  const goToProject = (project_id)=>{
+    navigation.navigate('projectCli',{project_id:project_id})
+  }
 
   const triggerCall = () => {
     // Check for perfect 12 digit length
@@ -46,8 +54,6 @@ export default function profileSp({navigation, route}) {
       }}
     );
     setInfo(responseInfo.data);  
-    
-
   }
 
   const getSpecialistProfile = async () => {
@@ -56,10 +62,8 @@ export default function profileSp({navigation, route}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    
     setProfile(responseProfile.data);
     setPhoneNumber(responseProfile.data[0].phone);
-
   }
 
   const getAverageRate = async () => {
@@ -73,7 +77,6 @@ export default function profileSp({navigation, route}) {
     }else{
       setRating(responseRating.data);  
     }
-
   }
 
   const getProjects = async () => {
@@ -82,20 +85,53 @@ export default function profileSp({navigation, route}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    //console.log(responseProjects.data);
     setProjects(responseProjects.data);  
-
   }
+
+  const getComments = async () => {
+    const responseComments = await  axios.get(`${BASE_API_URL}/api/get-comments?specialist_id=${specialist_id}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
+    );
+    setComments(responseComments.data); 
+  }
+
+  const renderComments = () => (
+    <View
+      style={{
+        backgroundColor: 'white',
+        padding: 16,
+        height: 450,
+      }}
+    >
+      <Text>Swipe down to close</Text>      
+        {/* <FlatList 
+          data = {comments}
+          keyExtractor={comment => comment.id}
+          renderItem={({comment}) => ( */}
+          <Card>
+            <View >
+              {/* <Text style={{fontSize:10, fontWeight:"bold"}}>{comment.first_name} {comment.last_name}</Text>
+              <Text style={{flexWrap:'wrap', fontSize: 15}}>{comment.comment}</Text> */}
+              <Text>this is a review</Text>
+            </View>
+          </Card>
+          {/* )}         
+        /> */}
+    </View>
+  );
 
   useEffect(() => {
     getSpecialistProfile();
     getSpecialistInfo();
     getAverageRate();
     getProjects();
+    getComments();
   }, [])
 
   
-    if (!(profile && info && projects && rating)){
+    if (!(profile && info && projects && rating && comments)){
       return (
        <Loading/>
       );
@@ -145,105 +181,102 @@ export default function profileSp({navigation, route}) {
                   </View>
               </TouchableOpacity>
             </View>
-
           </View>
-          
+
+       
+          <View >
+            <TouchableOpacity  onPress={() => sheetRef.current.snapTo(0)}>
+              <Text style={{fontSize:18, color:'blue'}}>Reviews</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/*  Specialist's projects */}
           <View  style={style.proj}>
             <Text style={style.projText}>Projects</Text>
           </View>
           
-        <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} >
-
-          <Card>
-            <View style={{flexDirection:'row'}}>
-              <Text style={[styles.FullName, {fontSize:18, marginRight:30}]}>Project name</Text>
-              <TouchableOpacity  onPress ={() => {navigation.navigate('projectCli'); }}>
+          {/* <View showsVerticalScrollIndicator={true} persistentScrollbar={true} > */}
+          <View>
+           <FlatList
+               data = {projects}
+               keyExtractor={project => project.id}
+               renderItem={({project}) => (
+             <View style={{flexDirection:'row', marginLeft:15}}> 
+              <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>project 1</Text>
+              <TouchableOpacity  onPress ={() => goToProject(1)}>
                 <Icon  name="chevron-double-right" color={colors.text} size={50} />
-              </TouchableOpacity>
+              </TouchableOpacity> 
             </View>
-          </Card>
-
-          
-        
-
-        </ScrollView>
-
-        <View  style={style.proj}>
-            <Text style={style.projText}>Reviews from other Clients</Text>
-          </View>
-
-          {/* add bottom sheet instead */}
-          <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true}>
-            <Card>
-              <View >
-                <Text style={{flexWrap:'wrap'}}>
-                  It was amazing to work with him, he is so talented, bla bla bla bla bla
-                </Text>
-              </View>
-            </Card>
-
-          
-        </ScrollView>
+             )} 
+          /> 
+        </View>
+        {/*  Specialist's Reviews */}
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={[450, 300, 0]}
+          borderRadius={10}
+          renderContent={renderComments}
+        />
 
 
 
-          {/* Modal to rate a specilist  */}
-          <View style={style. centeredView}>
-              <Modal
-                  animationType='slide'
-                  transparent={true}
-                  visible={modalRateVisible}
-              >
-              
-                  <View style={[style.centeredView, { marginTop: -200 }]}>
-                      {/* title */}
-                      <View style={style.modalView}>
-                          <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
-                              <Text> Rating and Reviews </Text>
-                              <View style={styles.HorizontalLine}></View>
-                              <TouchableOpacity
-                                  style={{ paddingHorizontal: 4 }}
-                                  onPress={() => setModalRateVisible(false)}
-                              >
-                                  <Icon name='close'/>
-                              </TouchableOpacity>
-                          </View>
-                          <View>
-                              {/* rating */}
-                              <View>
-                                <Rating
-                                  onFinishRating={(rating) => {
-                                    Alert.alert('Star Rating: ' + JSON.stringify(rating));
-                                  }}
-                                  style={{ paddingVertical: 10 }}
-                                />
-                              </View>
-                              {/* adding a review */}
-                              <Text> Add a review:</Text>
-                              <TextInput 
-                                  style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
-                                  multiline={true}
-                                  placeholder={"You're review goes here"}
-                                  placeholderTextColor= {colors.disabled_text}
-                                    // onChangeText={(projectName) => setFirstName(projectName)}
-                              />
-                              <View style={{flexDirection: "row", justifyContent : "space-around"}}>
-                                  <MyButtonGray
-                                      text = "cancel"
-                                      onPressFunction = {() => setModalRateVisible(false)}
-                                  />
-                                  <MyButtonDark
-                                      text = "save"
-                                      onPressFunction = {() => setModalRateVisible(false)}
-                                  />
+        {/* Modal to rate a specilist  */}
+        <View style={style. centeredView}>
+            <Modal
+                animationType='slide'
+                transparent={true}
+                visible={modalRateVisible}
+            >
             
-                              </View>
-                            
-                          </View>
-                      </View>
-                  </View>
-              </Modal>
-          </View>
+                <View style={[style.centeredView, { marginTop: -200 }]}>
+                    {/* title */}
+                    <View style={style.modalView}>
+                        <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
+                            <Text> Rating and Reviews </Text>
+                            <View style={styles.HorizontalLine}></View>
+                            <TouchableOpacity
+                                style={{ paddingHorizontal: 4 }}
+                                onPress={() => setModalRateVisible(false)}
+                            >
+                                <Icon name='close'/>
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            {/* rating */}
+                            <View>
+                              <Rating
+                                onFinishRating={(rating) => {
+                                  Alert.alert('Star Rating: ' + JSON.stringify(rating));
+                                }}
+                                style={{ paddingVertical: 10 }}
+                              />
+                            </View>
+                            {/* adding a review */}
+                            <Text> Add a review:</Text>
+                            <TextInput 
+                                style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
+                                multiline={true}
+                                placeholder={"You're review goes here"}
+                                placeholderTextColor= {colors.disabled_text}
+                                  // onChangeText={(projectName) => setFirstName(projectName)}
+                            />
+                            <View style={{flexDirection: "row", justifyContent : "space-around"}}>
+                                <MyButtonGray
+                                    text = "cancel"
+                                    onPressFunction = {() => setModalRateVisible(false)}
+                                />
+                                <MyButtonDark
+                                    text = "save"
+                                    onPressFunction = {() => setModalRateVisible(false)}
+                                />
+          
+                            </View>
+                          
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </View>
 
           
         </View>
@@ -251,6 +284,7 @@ export default function profileSp({navigation, route}) {
   }
 }
 const style = StyleSheet.create({
+
   nameContainer:{
     flexDirection:'row'
   },
