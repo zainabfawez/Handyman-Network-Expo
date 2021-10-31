@@ -1,19 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TextInput, ActivityIndicator, FlatList } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TextInput, FlatList } from 'react-native';
 import MapView ,{Callout, Marker} from 'react-native-maps';
 import {colors} from "../../constants/palette";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
+import Loading from '../../components/loading';
 
 
 export default function homeCli({navigation}) {
 
-  const [profile, setProfile] = useState(null);
-  const[pins,setPin]= useState(null);
+  const [client, setClient] = useState(null);
+  const[specialists,setSpecialists]= useState(null);
 
-
-
+  const goToProfile = (specialist_id, speciality)=>{
+    navigation.navigate('ProfileSp',{specialist_id:specialist_id, speciality:speciality})
+  }
 
   const getUserProfile = async () =>{
     try {
@@ -22,7 +24,7 @@ export default function homeCli({navigation}) {
           'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
         }}
       );
-      setProfile(responseProfile.data);
+      setClient(responseProfile.data);
     }catch(e) {
       //console.log(responseProfile.data);
           console.log("error");         
@@ -31,13 +33,13 @@ export default function homeCli({navigation}) {
 
   const getAllSpecialists = async () => {
 
-    const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-all-specialists`, 
+    const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
     );
     //console.log(responseSpecialists.data);
-    setPin(responseSpecialists.data);  
+    setSpecialists(responseSpecialists.data);  
   }
 
   useEffect(() => {
@@ -46,50 +48,50 @@ export default function homeCli({navigation}) {
       }, [])
 
 
-  // if (!profile){
-  //   return (
-  //     <View  style={{
-  //       flex: 1, 
-  //       alignItems: 'center',
-  //       justifyContent: 'center', 
-  //     }}>
-          
-  //         <ActivityIndicator size='large' color={colors.primary}/>
-  //     </View>
-    
-
-  //   );
-  // }else{
+  if (!specialists){
     return (
-      //console.log(profile.first_name),
-      //console.log(pins),
+     <Loading/>
+    );
+  }else{
+
+    return (
+      //console.log(specialists),
       <View style={style.container}> 
         <MapView
           showsUserLocation
           style={style.map}
           region={{ 
-            latitude : 33.868427, 
-            longitude : 35.538832,
+            latitude : 33.898427, 
+            longitude :  35.598832,
             latitudeDelta: 0.022, 
             longitudeDelta: 0.0421 }}
         >
-          
-         
-          <Marker 
-            color = "pink"
-            coordinate={{
-              latitude:33.868427,  
-              longitude:35.538832,     
-          }}> 
-            <Callout onPress = {() => {navigation.navigate('ProfileSp');}}>
-              <View>
-                <Text>Specialist</Text>
-                
-              </View>
-            </Callout>
-
-          </Marker>
-     
+           
+          {/* {specialists && <FlatList
+               data = {specialists}
+               keyExtractor={item => item.id}
+               renderItem={({item}) => ( */}
+                 
+                  <Marker 
+                    coordinate={{
+                      latitude:33.898427,  
+                      longitude: 35.598832,     
+                  }}> 
+                    <Callout onPress = {() => {goToProfile(1,'electrician')}}>
+                      <View>
+                        {/* <Text>`${item.first_name} ${item.last_name}`</Text>
+                        <Text>{item.speciality}</Text>
+                         */}
+                         <Text>Hiiii</Text>
+                      </View>
+                    </Callout>
+ 
+                  </Marker>
+                {/* )}   
+               
+          />} 
+                */}
+            
         </MapView>
         <View style={{ position: 'absolute', top: 10, width: '100%' }}>
           <TextInput
@@ -103,7 +105,7 @@ export default function homeCli({navigation}) {
       </View>
 
     );
-  //}
+  }
 }
 const style = StyleSheet.create({
   map: {

@@ -141,8 +141,6 @@ export default function projectSp({navigation}) {
             </Modal>
         </View>
 
-
-
         <View style={{flexDirection: "row", justifyContent : "space-around",}}>
           <View style={{"flex":0.5, margin :15}}>
             <MyButtonDark

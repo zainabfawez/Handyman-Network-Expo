@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput, ActivityIndicator} from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -11,14 +11,19 @@ import axios from 'axios';
 import BASE_API_URL from '../../services/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from 'react-native-elements';
+import Loading from '../../components/loading';
 
 
-export default function profileSp({navigation}) {
+export default function profileSp({navigation, route}) {
 
+  const specialist_id = route.params.specialist_id;
+  const speciality = route.params.speciality;
   const [modalRateVisible, setModalRateVisible] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('+96170027217');
-  const [profile, setprofile] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [info, setInfo] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [projects, setProjects] = useState(null);
 
   const triggerCall = () => {
     // Check for perfect 12 digit length
@@ -26,7 +31,6 @@ export default function profileSp({navigation}) {
       alert('The number is incorrect');
       return;
     }
-
     const args = {
       number: phoneNumber,
       prompt: true,
@@ -36,196 +40,215 @@ export default function profileSp({navigation}) {
   };
 
   const getSpecialistInfo = async () => {
-    const responseInfo = await  axios.get(`${BASE_API_URL}/api/get-user?id=1`, 
+    const responseInfo = await  axios.get(`${BASE_API_URL}/api/get-user?id=${specialist_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
-  
     );
-    console.log(responseInfo.data);
     setInfo(responseInfo.data);  
+    
+
   }
 
   const getSpecialistProfile = async () => {
-    const responseProfile = await  axios.get(`${BASE_API_URL}/api/get-profile?specialist_id=1`, 
+    const responseProfile = await  axios.get(`${BASE_API_URL}/api/get-profile?specialist_id=${specialist_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
-     
     );
-    console.log(responseProfile.data);
-    setprofile(responseProfile.data);  
+    
+    setProfile(responseProfile.data);
+    setPhoneNumber(responseProfile.data[0].phone);
+
+  }
+
+  const getAverageRate = async () => {
+    const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${specialist_id}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
+    );
+    if (responseRating.data == "no rates yet"){
+      setRating("No Rating");  
+    }else{
+      setRating(responseRating.data);  
+    }
+
+  }
+
+  const getProjects = async () => {
+    const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-projects?specialist_id=${specialist_id}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
+    );
+    //console.log(responseProjects.data);
+    setProjects(responseProjects.data);  
+
   }
 
   useEffect(() => {
     getSpecialistProfile();
     getSpecialistInfo();
-    }, [])
+    getAverageRate();
+    getProjects();
+  }, [])
 
   
-    // if (!profile){
-    //   return (
-    //     <View  style={{
-    //       flex: 1, 
-    //       alignItems: 'center',
-    //       justifyContent: 'center', 
-    //     }}>
-            
-    //         <ActivityIndicator size='large' color={colors.primary}/>
-    //     </View>
-      
-  
-    //   );
-    // }else{
-
-    return (
-      <View style={styles.container}>
-        <View >
-          <View style={{flexDirection: 'row'}}>
-            <Image
-                style={styles.ProfileImg} 
-                source={require( '../../../assets/profilePic.png')}
-            />
-                {/* Full name and Speciality and Info*/}
-            <View style={{marginLeft: 15}}>
-              <View style={style.nameContainer}>
-                  <Text style={styles.FullName}>Full Name </Text> 
-              </View>
-              <View style={style.nameContainer}>
-                  <Text style={styles.SpName}>  Speciality </Text> 
-              </View>
-              <View style={styles.row}>
-                <Icon name="flag" color={colors.primary_dark} size={30} />
-                <Text>     20 $/hr    </Text>
-                <Text>3.5</Text>
-                <Icon name="star" color={colors.gold} size={20} />
+    if (!(profile && info && projects && rating)){
+      return (
+       <Loading/>
+      );
+    }else{
+      return (
+        <View style={styles.container}>
+          <View >
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                  style={styles.ProfileImg} 
+                  source={require( '../../../assets/profilePic.png')}
+              />
+                  {/* Full name and Speciality and Info*/}
+              <View style={{marginLeft: 15}}>
+                <View style={style.nameContainer}>
+                    <Text style={styles.FullName}>{info.first_name} {info.last_name}</Text> 
+                </View>
+                <View style={style.nameContainer}>
+                    <Text style={styles.SpName}> {speciality} </Text> 
+                </View>
+                <View style={styles.row}>
+                  <Icon name="flag" color={colors.primary_dark} size={30} />
+                  <Text>    {profile[0].price} $/hr    </Text>
+                  <Text>{rating}</Text>
+                  <Icon name="star" color={colors.gold} size={20} />
+                </View>
               </View>
             </View>
+
+            <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
+              {/* allow calling from react native */}
+              <TouchableOpacity>
+                  <View>
+                    <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
+                  </View>
+              </TouchableOpacity>
+              <View style={styles.VerticleLine}></View>
+              <TouchableOpacity>
+                  <View >
+                    <Icon name="phone" color={colors.primary} size={30} onPress={triggerCall} />
+                  </View>
+              </TouchableOpacity>
+              <View style={styles.VerticleLine}></View>
+              <TouchableOpacity>
+                  <View >
+                    <Icon name="chat" color={colors.primary} size={30} />
+                  </View>
+              </TouchableOpacity>
+            </View>
+
           </View>
-
-          <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
-            {/* allow calling from react native */}
-            <TouchableOpacity>
-                <View>
-                  <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
-                </View>
-            </TouchableOpacity>
-            <View style={styles.VerticleLine}></View>
-            <TouchableOpacity>
-                <View >
-                  <Icon name="phone" color={colors.primary} size={30} onPress={triggerCall} />
-                </View>
-            </TouchableOpacity>
-            <View style={styles.VerticleLine}></View>
-            <TouchableOpacity>
-                <View >
-                  <Icon name="chat" color={colors.primary} size={30} />
-                </View>
-            </TouchableOpacity>
+          
+          <View  style={style.proj}>
+            <Text style={style.projText}>Projects</Text>
           </View>
+          
+        <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} >
 
-        </View>
-        
-        <View  style={style.proj}>
-          <Text style={style.projText}>Projects</Text>
-        </View>
-         
-       <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} >
-
-         <Card>
-          <View style={{flexDirection:'row'}}>
-            <Text style={[styles.FullName, {fontSize:18, marginRight:30}]}>Project name</Text>
-            <TouchableOpacity  onPress ={() => {navigation.navigate('projectCli'); }}>
-              <Icon  name="chevron-double-right" color={colors.text} size={50} />
-            </TouchableOpacity>
-          </View>
-         </Card>
-
-         
-      
-
-       </ScrollView>
-
-       <View  style={style.proj}>
-          <Text style={style.projText}>Reviews from other Clients</Text>
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true}>
           <Card>
-            <View >
-              <Text style={{flexWrap:'wrap'}}>
-                It was amazing to work with him, he is so talented, bla bla bla bla bla
-              </Text>
+            <View style={{flexDirection:'row'}}>
+              <Text style={[styles.FullName, {fontSize:18, marginRight:30}]}>Project name</Text>
+              <TouchableOpacity  onPress ={() => {navigation.navigate('projectCli'); }}>
+                <Icon  name="chevron-double-right" color={colors.text} size={50} />
+              </TouchableOpacity>
             </View>
           </Card>
 
-         
-       </ScrollView>
-
-
-
-         {/* Modal to rate a specilist  */}
-         <View style={style. centeredView}>
-            <Modal
-                animationType='slide'
-                transparent={true}
-                visible={modalRateVisible}
-            >
-             
-                <View style={[style.centeredView, { marginTop: -200 }]}>
-                     {/* title */}
-                    <View style={style.modalView}>
-                        <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
-                            <Text> Rating and Reviews </Text>
-                            <View style={styles.HorizontalLine}></View>
-                            <TouchableOpacity
-                                style={{ paddingHorizontal: 4 }}
-                                onPress={() => setModalRateVisible(false)}
-                            >
-                                <Icon name='close'/>
-                            </TouchableOpacity>
-                        </View>
-                        <View>
-                            {/* rating */}
-                            <View>
-                              <Rating
-                                onFinishRating={(rating) => {
-                                  Alert.alert('Star Rating: ' + JSON.stringify(rating));
-                                }}
-                                style={{ paddingVertical: 10 }}
-                              />
-                            </View>
-                            {/* adding a review */}
-                            <Text> Add a review:</Text>
-                            <TextInput 
-                                style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
-                                multiline={true}
-                                placeholder={"You're review goes here"}
-                                placeholderTextColor= {colors.disabled_text}
-                                  // onChangeText={(projectName) => setFirstName(projectName)}
-                            />
-                            <View style={{flexDirection: "row", justifyContent : "space-around"}}>
-                                <MyButtonGray
-                                    text = "cancel"
-                                    onPressFunction = {() => setModalRateVisible(false)}
-                                />
-                                <MyButtonDark
-                                    text = "save"
-                                    onPressFunction = {() => setModalRateVisible(false)}
-                                />
           
-                            </View>
-                           
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-        </View>
-
         
-      </View>
-    );
-  //}
+
+        </ScrollView>
+
+        <View  style={style.proj}>
+            <Text style={style.projText}>Reviews from other Clients</Text>
+          </View>
+
+          {/* add bottom sheet instead */}
+          <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true}>
+            <Card>
+              <View >
+                <Text style={{flexWrap:'wrap'}}>
+                  It was amazing to work with him, he is so talented, bla bla bla bla bla
+                </Text>
+              </View>
+            </Card>
+
+          
+        </ScrollView>
+
+
+
+          {/* Modal to rate a specilist  */}
+          <View style={style. centeredView}>
+              <Modal
+                  animationType='slide'
+                  transparent={true}
+                  visible={modalRateVisible}
+              >
+              
+                  <View style={[style.centeredView, { marginTop: -200 }]}>
+                      {/* title */}
+                      <View style={style.modalView}>
+                          <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
+                              <Text> Rating and Reviews </Text>
+                              <View style={styles.HorizontalLine}></View>
+                              <TouchableOpacity
+                                  style={{ paddingHorizontal: 4 }}
+                                  onPress={() => setModalRateVisible(false)}
+                              >
+                                  <Icon name='close'/>
+                              </TouchableOpacity>
+                          </View>
+                          <View>
+                              {/* rating */}
+                              <View>
+                                <Rating
+                                  onFinishRating={(rating) => {
+                                    Alert.alert('Star Rating: ' + JSON.stringify(rating));
+                                  }}
+                                  style={{ paddingVertical: 10 }}
+                                />
+                              </View>
+                              {/* adding a review */}
+                              <Text> Add a review:</Text>
+                              <TextInput 
+                                  style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
+                                  multiline={true}
+                                  placeholder={"You're review goes here"}
+                                  placeholderTextColor= {colors.disabled_text}
+                                    // onChangeText={(projectName) => setFirstName(projectName)}
+                              />
+                              <View style={{flexDirection: "row", justifyContent : "space-around"}}>
+                                  <MyButtonGray
+                                      text = "cancel"
+                                      onPressFunction = {() => setModalRateVisible(false)}
+                                  />
+                                  <MyButtonDark
+                                      text = "save"
+                                      onPressFunction = {() => setModalRateVisible(false)}
+                                  />
+            
+                              </View>
+                            
+                          </View>
+                      </View>
+                  </View>
+              </Modal>
+          </View>
+
+          
+        </View>
+      );
+  }
 }
 const style = StyleSheet.create({
   nameContainer:{
