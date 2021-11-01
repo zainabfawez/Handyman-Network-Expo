@@ -25,6 +25,12 @@ export default function settingSp({navigation}) {
     //}
   }
 
+
+
+
+
+
+
    //logout
 //    const logoutHandler = async() => {
   

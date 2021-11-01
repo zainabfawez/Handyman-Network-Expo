@@ -2,7 +2,9 @@ import React, {useState} from 'react';
 import { Text, View, Image, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native';
 import Swiper from "react-native-web-swiper";
 
-export default function projectCli() {
+export default function projectCli({route}) {
+
+  const project_id = route.params.project_id;
     return(
         <View style={{flex:1}}>
         <Swiper

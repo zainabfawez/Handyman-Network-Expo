@@ -15,7 +15,7 @@ export default function DisplayProjects(props) {
                         <Icon name="image-multiple-outline" size={60} color = {colors.text}/>
                         <View style={{marginLeft:10}}>
                             <Text style = {style.name}>{props.name}</Text>
-                            <Text style = {style.description}>{props.description}</Text>
+                            <Text style = {style.description} numberOfLines={5}>{props.description}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -43,5 +43,8 @@ const style = StyleSheet.create({
         fontSize : 15,
         marginLeft : 5,
         marginBottom : 5,
+        flexWrap:'wrap',
+        paddingRight:10,
+        
     }
 });

@@ -31,8 +31,11 @@ export default function projectSp({navigation}) {
   const [speciality, setSpeciality] = useState(null);
   const [id, setId] = useState(null);
   const [rating, setRating] = useState(null);
+  const [pushTokens, setPushTokens] = useState(null);
+  const [newTip, setNewTip] = useState(null);
+  const [projects, setProjects] = useState(null);
   
-
+  
   //for push notifications
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
@@ -44,25 +47,65 @@ export default function projectSp({navigation}) {
       setFullName( await AsyncStorage.getItem('fullName'));
       await AsyncStorage.getItem('user_id')
       .then((id) => {
-        console.log(id)
         setId(Number(id))})
-     
-    } catch(e) {
-      console.log(e);
+    } catch(error) {
+      console.log(error);
     }
   }
 
   const getSpeciality = async () => {
-    const responseSpeciality = await  axios.get(`${BASE_API_URL}/api/get-specialist-specialities?specialist_id=1`, 
+    const responseSpeciality = await  axios.get(`${BASE_API_URL}/api/get-specialist-specialities?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
     );
     setSpeciality(responseSpeciality.data);  
+    console.log(responseSpeciality.data)
+  }
+
+  const addNewTip = async () => {
+    const responseTip = await  axios.post(`${BASE_API_URL}/api/add-tip`,{  
+      "tip" : newTip
+    },
+    {headers:{
+      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+    }}
+    );
+    if(responseTip.data.status){
+      async () => {pushTokens.map(async(pushToken, key) =>  {
+        return(
+        key={key},
+        await sendPushNotification(pushToken, "A new Tip has been added", "newTip")
+        )})}
+        setModalTipVisible(false)
+    }
+  }
+
+  const getProjects = async () => {
+    const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-specialist-projects?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}
+    );
+    if (responseProjects.data.status){
+      setProjects('No Projects found');
+    }else{
+      setProjects(responseProjects.data);  
+    }
+   
+  }
+
+  const getPushTokens = async () => {
+    const responsePushTokens = await  axios.get(`${BASE_API_URL}/api/get-push-tokens`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }} 
+    );
+    setPushTokens(responsePushTokens.data);  
   }
 
   const getAverageRate = async () => {
-    const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=1`, 
+    const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
@@ -72,23 +115,29 @@ export default function projectSp({navigation}) {
     }else{
       setRating(responseRating.data);  
     }
+    console.log(responseRating.data)
   }
 
+  const goToPhotos = (project_id)=>{
+    navigation.navigate('photos',{project_id:project_id})
+  }
 
   useEffect(() => {
     getName();
     getSpeciality();
     getAverageRate();
+    getPushTokens();
+    getProjects();
   }, []);
 
-  if (!(fullName && speciality && rating )){
+  if (!(fullName && speciality && rating && pushTokens && projects )){
     return (
      <Loading/>
     );
   }else{
 
     return (
-      console.log(fullName, id, speciality, rating),
+      console.log(fullName, id, speciality, rating, projects),
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
           <Image
@@ -97,15 +146,11 @@ export default function projectSp({navigation}) {
           />
           <View >
             <Text style={styles.FullName}>  {fullName} </Text> 
-            <Text style={styles.SpName}>  {speciality[0].name} </Text> 
-            <Text style={{marginLeft: 25, fontSize: 16}}> 
-              3.5 
-              <Icon 
-                name="star" 
-                color={colors.gold} 
-                size={30}
-              /> 
-            </Text> 
+            <Text style={styles.SpName}>  {speciality[0].name} </Text>
+            <View style={{flexDirection: 'row', marginTop: 5}}>
+              <Text style={{marginLeft: 25, fontSize: 16}}> {rating}  </Text>
+              <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
+            </View>  
           </View>
         </View>
         <View style={{marginTop: 20}}>
@@ -115,17 +160,18 @@ export default function projectSp({navigation}) {
         </View>
          
           <ScrollView >
-            {/* //call Api to display projects and their Photos */}
-            <DisplayProjects 
-              name = "project 1" 
-              description = "Project about carpenting" 
-              onPressFunction = {() =>{ navigation.navigate('Photos'); }}
-              />
+          {projects.map((project, key) => {
+            return(
+              <DisplayProjects 
+                key={key}
+                name = {project.name} 
+                description = {project.description} 
+                onPressFunction = {() =>{ goToPhotos(project.id) }}
+                />
+            )})}
           </ScrollView>
 
         </View>
-        
-      
 
         {/* Modal to add a tip */}
         <View style={style. centeredView}>
@@ -153,7 +199,7 @@ export default function projectSp({navigation}) {
                                 multiline={true}
                                 placeholder={"You're tip goes here"}
                                 placeholderTextColor= {colors.disabled_text}
-                                  // onChangeText={(projectName) => setFirstName(projectName)}
+                                onChangeText={(newTip) => setNewTip(newTip)}
                             />
                             <View style={{flexDirection: "row", justifyContent : "space-around"}}>
                                 <MyButtonGray
@@ -162,16 +208,9 @@ export default function projectSp({navigation}) {
                                 />
                                 <MyButtonDark
                                     text = "save"
-                                    onPressFunction = {() =>  setModalTipVisible(false)}
-                                    onPressFunction = {async () => {
-                                      await sendPushNotification(expoPushToken, "body goes here", "tite goes here");
-                                    }}
+                                    onPressFunction = {addNewTip}  
                                 />
-                                {/* {async () => {tokens.map(async (token)=> await...) */}
-          
-                            </View>
-                          
-                           
+                            </View>   
                         </View>
                     </View>
                 </View>
@@ -195,20 +234,12 @@ export default function projectSp({navigation}) {
          
           
         </View>
-        {/* // move this function to when the user add a tip
-        // you need an api that gets all the token pf the clients and 
-        //then you loop over the token and call sendPushNotification in the loop */}
-        {/* <Button
-          title="Press to Send Notification"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        /> */}
+     
       </View>
     );
   }
-}
 
+}
 
 const style = StyleSheet.create({
   input:{
