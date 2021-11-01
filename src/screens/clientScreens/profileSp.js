@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert, ScrollView, Modal, TextInput, FlatList } from 'react-native';
+import React, {useState, useEffect } from 'react';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert,  Modal, TextInput, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -12,7 +12,6 @@ import BASE_API_URL from '../../services/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from 'react-native-elements';
 import Loading from '../../components/loading';
-import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 
@@ -72,10 +71,10 @@ export default function profileSp({navigation, route}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    if (responseRating.data == "no rates yet"){
+    if (responseRating.data.status){
       setRating("No Rating");  
     }else{
-      setRating(responseRating.data);  
+      setRating(JSON.stringify(responseRating.data));  
     }
   }
 
@@ -136,7 +135,9 @@ export default function profileSp({navigation, route}) {
        <Loading/>
       );
     }else{
+     
       return (
+        console.log(rating),
         <View style={styles.container}>
           <View >
             <View style={{flexDirection: 'row'}}>
@@ -152,23 +153,25 @@ export default function profileSp({navigation, route}) {
                 <View style={style.nameContainer}>
                     <Text style={styles.SpName}> {speciality} </Text> 
                 </View>
-                <View style={styles.row}>
+                <View style={styles.row }>
                   <Icon name="flag" color={colors.primary_dark} size={30} />
-                  <Text>    {profile[0].price} $/hr    </Text>
+                  <Text>    {profile[0].price} {profile[0].currency=='USD' ? '$' : 'L.L.'}/hr    </Text>
                   <Text>{rating}</Text>
-                  <Icon name="star" color={colors.gold} size={20} />
+                 <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
                 </View>
               </View>
             </View>
 
             <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
-              {/* allow calling from react native */}
+             
               <TouchableOpacity>
                   <View>
                     <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
                   </View>
               </TouchableOpacity>
               <View style={styles.VerticleLine}></View>
+
+               {/* allow calling from react native */}
               <TouchableOpacity>
                   <View >
                     <Icon name="phone" color={colors.primary} size={30} onPress={triggerCall} />
@@ -195,7 +198,6 @@ export default function profileSp({navigation, route}) {
             <Text style={style.projText}>Projects</Text>
           </View>
           
-          {/* <View showsVerticalScrollIndicator={true} persistentScrollbar={true} > */}
           <View>
            <FlatList
                data = {projects}

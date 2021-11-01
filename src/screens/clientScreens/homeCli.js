@@ -1,18 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TextInput, FlatList } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import MapView ,{Callout, Marker} from 'react-native-maps';
-import {colors} from "../../constants/palette";
+import MapView ,{ Callout, Marker } from 'react-native-maps';
+import { colors } from "../../constants/palette";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
 
 
+
+
+
 export default function homeCli({navigation}) {
 
   const [client, setClient] = useState(null);
-  const[specialists,setSpecialists]= useState(null);
+  const[specialists,setSpecialists] = useState(null);
+  const [searchSpeciality, setSearchSpeciality] = useState(null);
 
   const goToProfile = (specialist_id, speciality)=>{
     navigation.navigate('ProfileSp',{specialist_id:specialist_id, speciality:speciality})
@@ -32,35 +36,48 @@ export default function homeCli({navigation}) {
   }
 
   const getAllSpecialists = async () => {
-    const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`, 
-      { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }} 
+    const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`,  
+    {headers:{
+      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+    }}
     );
     setSpecialists(responseSpecialists.data);  
   }
 
+  const getSearchedSpecialists = async () => {
+    const responseSearch = await  axios.post(`${BASE_API_URL}/api/search-speciality`,  
+    {
+      "speciality" : searchSpeciality
+    },
+    {headers:{
+      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+    }}
+    );
+    setSpecialists(responseSearch.data);  
+  }
+
+
   useFocusEffect( React.useCallback(() => {
       getUserProfile();
       getAllSpecialists();
-      }, []))
+      }, [specialists]))
 
 
-  if (!specialists){
+  if (!(specialists && client)){
     return (
      <Loading/>
     );
   }else{
 
     return (
-      console.log(specialists),
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={style.container}> 
         <MapView
           showsUserLocation
           style={style.map}
           region={{ 
-            latitude : 33.898427, 
-            longitude :  35.598832,
+            latitude : 33.848427, 
+            longitude :  35.518832,
             latitudeDelta: 0.022, 
             longitudeDelta: 0.0421 }}
         >
@@ -72,7 +89,7 @@ export default function homeCli({navigation}) {
                   latitude: parseFloat(specialist.latitude),  
                   longitude: parseFloat(specialist.longitude),     
                 }}> 
-                  <Callout onPress = {() => {goToProfile(1,'electrician')}}>
+                  <Callout onPress = {() => {goToProfile(specialist.id, specialist.speciality)}}>
                     <View>
                       <Text style={{fontWeight:'bold'}}>{specialist.first_name} {specialist.last_name}</Text>
                       <Text>{specialist.speciality}</Text>
@@ -82,17 +99,18 @@ export default function homeCli({navigation}) {
             )})}
 
         </MapView>
+
         <View style={{ position: 'absolute', top: 10, width: '100%' }}>
-          <TextInput
+        <TextInput
             style={style.SearchInput}
             placeholder={'Search for a specialty'}
-            placeholderTextColor={colors.disabled_text}
-            
+            placeholderTextColor={colors.disabled_text} 
+            onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
         />
        </View>
-      
-      </View>
 
+      </View>
+    </TouchableWithoutFeedback>
     );
   }
 }
