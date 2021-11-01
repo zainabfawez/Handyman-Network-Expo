@@ -47,41 +47,42 @@ export default function signup({ navigation }) {
       }else{
         setIsSpecialist(0)
       }
-      await registerForPushNotificationsAsync().then((token)=> {
+      await registerForPushNotificationsAsync().then(async (token)=> {
         setPushNotificationToken(token)
 
-      })
-      try {
+        try {
 
-        const res = await  axios.post(`${BASE_API_URL}/api/register`, {
-          "first_name" : firstName,
-          "last_name" : lastName,
-          "email" : email,
-          "password" :password,
-          "password_confirmation": cpassword,
-          "is_specialist": isSelected,
-          "longitude" : location.coords.longitude,
-          "latitude" : location.coords.latitude,
-          "expoPushNotificationToken" : pushNotificationToken,
-          
-        }).then((response)=> {
-            if(response.data['user']['is_specialist']){
-              navigation.navigate('AddProfile');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'AddProfile' }],
-                });
-            }else{
-              navigation.navigate('BottomTabCli');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'BottomTabCli' }],
-                });
-            }  
-        }) 
-      } catch(err) {
-        setidBadCredentials("Check your informations");
-      }
+          const res = await axios.post(`${BASE_API_URL}/api/register`, {
+            "first_name" : firstName,
+            "last_name" : lastName,
+            "email" : email,
+            "password" :password,
+            "password_confirmation": cpassword,
+            "is_specialist": isSelected,
+            "longitude" : location.coords.longitude,
+            "latitude" : location.coords.latitude,
+            "expoPushNotificationToken" : token,
+            
+          }).then((response)=> {
+              if(response.data['user']['is_specialist']){
+                navigation.navigate('AddProfile');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'AddProfile' }],
+                  });
+              }else{
+                navigation.navigate('BottomTabCli');
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'BottomTabCli' }],
+                  });
+              }  
+          }) 
+        } catch(err) {
+          setidBadCredentials("Check your informations");
+        }
+      })
+      
     }else{
       setidBadCredentials("Please fill every required field!");
       

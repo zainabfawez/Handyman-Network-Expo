@@ -214,11 +214,10 @@ export default function profileSp({navigation, route}) {
         <BottomSheet
           ref={sheetRef}
           snapPoints={[450, 300, 0]}
+          initialSnap={2}
           borderRadius={10}
           renderContent={renderComments}
         />
-
-
 
         {/* Modal to rate a specilist  */}
         <View style={style. centeredView}>

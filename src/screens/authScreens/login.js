@@ -15,10 +15,7 @@ export default function login({ navigation }) {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [bad_credentials, setidBadCredentials] = useState(null);
-  const [profile, setProfile] = useState(null);
-
-  
-
+ 
   const pressLogin = async () => {
     try {
       const res = await  axios.post(`${BASE_API_URL}/api/login`, {
@@ -26,8 +23,9 @@ export default function login({ navigation }) {
         "password":password
       });
       await AsyncStorage.setItem('token', res.data['access_token']);
+      await AsyncStorage.setItem('user_id', JSON.stringify(res.data['user']['id']));
       await AsyncStorage.setItem('fullName', res.data['user']['first_name'] + ' ' + res.data['user']['last_name']);
-      await AsyncStorage.setItem('role', res.data['user']['is_specialist']?"specialist":"client");
+     
       setidBadCredentials(null);
       if (res.data['user']['is_specialist']){
         //geting profile of specialist, if empty navigate to Add profile
@@ -85,7 +83,7 @@ export default function login({ navigation }) {
             </View>
             <Text style={style.loginTitleText}>Login</Text>
             <View style={style.hr}></View>
-            <Text>{bad_credentials && "Invalid Credentials"}</Text>
+            <Text  style={{color: colors.red}}>{bad_credentials && "Wrong username or password."}</Text>
             <View style={style.inputBox}>
               <Text style={style.inputLabel}>Email</Text>
               <TextInput

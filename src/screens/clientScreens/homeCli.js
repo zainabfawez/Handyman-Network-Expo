@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, Dimensions, TextInput, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import MapView ,{Callout, Marker} from 'react-native-maps';
 import {colors} from "../../constants/palette";
 import axios from 'axios';
@@ -31,7 +32,6 @@ export default function homeCli({navigation}) {
   }
 
   const getAllSpecialists = async () => {
-
     const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
@@ -40,10 +40,10 @@ export default function homeCli({navigation}) {
     setSpecialists(responseSpecialists.data);  
   }
 
-  useEffect(() => {
+  useFocusEffect( React.useCallback(() => {
       getUserProfile();
       getAllSpecialists();
-      }, [])
+      }, []))
 
 
   if (!specialists){
@@ -53,6 +53,7 @@ export default function homeCli({navigation}) {
   }else{
 
     return (
+      console.log(specialists),
       <View style={style.container}> 
         <MapView
           showsUserLocation
@@ -63,32 +64,23 @@ export default function homeCli({navigation}) {
             latitudeDelta: 0.022, 
             longitudeDelta: 0.0421 }}
         >
-           
-          {/* {specialists && <FlatList
-               data = {specialists}
-               keyExtractor={item => item.id}
-               renderItem={({item}) => ( */}
-                 
-                  <Marker 
-                    coordinate={{
-                      latitude:33.898427,  
-                      longitude: 35.598832,     
-                  }}> 
-                    <Callout onPress = {() => {goToProfile(1,'electrician')}}>
-                      <View>
-                        {/* <Text>`${item.first_name} ${item.last_name}`</Text>
-                        <Text>{item.speciality}</Text>
-                         */}
-                         <Text>Hiiii</Text>
-                      </View>
-                    </Callout>
- 
-                  </Marker>
-                {/* )}   
-               
-          />} 
-                */}
-            
+            {specialists.map((specialist, key) => {
+              return(
+                <Marker 
+                key={key}
+                coordinate={{
+                  latitude: parseFloat(specialist.latitude),  
+                  longitude: parseFloat(specialist.longitude),     
+                }}> 
+                  <Callout onPress = {() => {goToProfile(1,'electrician')}}>
+                    <View>
+                      <Text style={{fontWeight:'bold'}}>{specialist.first_name} {specialist.last_name}</Text>
+                      <Text>{specialist.speciality}</Text>
+                    </View>
+                  </Callout>
+              </Marker>
+            )})}
+
         </MapView>
         <View style={{ position: 'absolute', top: 10, width: '100%' }}>
           <TextInput

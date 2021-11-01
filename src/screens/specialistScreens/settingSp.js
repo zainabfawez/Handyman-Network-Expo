@@ -10,6 +10,8 @@ export default function settingSp({navigation}) {
 
   const logout = async() => {
     AsyncStorage.clear();
+    // api call to set the expo tokento null
+    // api call to logout and navigate in the .then
     navigation.navigate('Login');
     navigation.reset({
       index: 0,
