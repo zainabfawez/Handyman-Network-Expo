@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput} from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MapView ,{ Callout, Marker } from 'react-native-maps';
 import { colors } from "../../constants/palette";
@@ -7,8 +7,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
-
-
+import Icon from 'react-native-vector-icons/Ionicons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
@@ -53,8 +53,13 @@ export default function homeCli({navigation}) {
       'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
     }}
     );
-    setSpecialists(responseSearch.data);  
+    if (responseSearch.data.status){
+      Alert.alert('No Search Results');
+    }else{
+      setSpecialists(responseSearch.data);  
+    }
   }
+   
 
 
   useFocusEffect( React.useCallback(() => {
@@ -100,13 +105,20 @@ export default function homeCli({navigation}) {
 
         </MapView>
 
-        <View style={{ position: 'absolute', top: 10, width: '100%' }}>
-        <TextInput
-            style={style.SearchInput}
-            placeholder={'Search for a specialty'}
-            placeholderTextColor={colors.disabled_text} 
-            onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
-        />
+        <View style={style.searchBox}>
+
+          <TextInput 
+            placeholder="Search here"
+            placeholderTextColor={colors.disabled_text}
+            onPressOut={Keyboard.dismiss()}
+            autoCapitalize="none" 
+            style={{flex:1,padding:0}}
+            //onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
+          />
+          <TouchableOpacity >  
+            {/* onPress={()=>getSearchedSpecialists} */}
+            <Icon name="ios-search" size={25}  color={colors.primary_dark}/>
+          </TouchableOpacity>
        </View>
 
       </View>
@@ -123,15 +135,32 @@ const style = StyleSheet.create({
     flex : 1,
   },
 
-  SearchInput:{
-    borderRadius: 10,
-    margin: 10,
-    color: '#000',
-    borderColor: '#666',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    height: 45,
-    paddingHorizontal: 10,
-    fontSize: 18,
-  }
+  searchBox: {
+    position:'absolute', 
+    flexDirection:"row",
+    top:10,
+    backgroundColor: '#fff',
+    width: '90%',
+    alignSelf:'center',
+    borderRadius: 5,
+    padding: 10,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+  },
+  
+
+  // SearchInput:{
+  //   borderRadius: 10,
+  //   margin: 10,
+  //   color: '#000',
+  //   borderColor: '#666',
+  //   backgroundColor: colors.white,
+  //   borderWidth: 1,
+  //   height: 45,
+  //   paddingLeft: 10,
+  //   width: '80%',
+  //   fontSize: 18,
+  // }
 });

@@ -12,6 +12,7 @@ import BASE_API_URL from '../../services/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from 'react-native-elements';
 import Loading from '../../components/loading';
+import EmptyState from '../../components/EmptyState';
 import BottomSheet from 'reanimated-bottom-sheet';
 
 
@@ -84,7 +85,12 @@ export default function profileSp({navigation, route}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    setProjects(responseProjects.data);  
+    if (responseProjects.data.status){
+      setProjects('No Projects found');
+    }else{
+      setProjects(responseProjects.data);  
+    }
+   
   }
 
   const getComments = async () => {
@@ -93,7 +99,12 @@ export default function profileSp({navigation, route}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    setComments(responseComments.data); 
+    if (responseComments.data.status){
+      setComments('No Reviews yet');
+    }else{
+      setComments(responseComments.data); 
+    }
+   
   }
 
   const renderComments = () => (
@@ -104,20 +115,16 @@ export default function profileSp({navigation, route}) {
         height: 450,
       }}
     >
-      <Text>Swipe down to close</Text>      
-        {/* <FlatList 
-          data = {comments}
-          keyExtractor={comment => comment.id}
-          renderItem={({comment}) => ( */}
+      <Text>Swipe down to close</Text>  
+      {comments.map((comment, key) => {
+        return(
           <Card>
-            <View >
-              {/* <Text style={{fontSize:10, fontWeight:"bold"}}>{comment.first_name} {comment.last_name}</Text>
-              <Text style={{flexWrap:'wrap', fontSize: 15}}>{comment.comment}</Text> */}
-              <Text>this is a review</Text>
+            <View>
+              <Text  key={key} style={{fontWeight: 'bold', fontSize: 12}}> {comment.first_name} {comment.last_name}</Text>
+              <Text>{comment.comment}</Text>
             </View>
           </Card>
-          {/* )}         
-        /> */}
+        )})}
     </View>
   );
 
@@ -194,24 +201,24 @@ export default function profileSp({navigation, route}) {
           </View>
 
           {/*  Specialist's projects */}
+          
           <View  style={style.proj}>
             <Text style={style.projText}>Projects</Text>
           </View>
-          
+          {projects.map((project, key) => {
+              return(
           <View>
-           <FlatList
-               data = {projects}
-               keyExtractor={project => project.id}
-               renderItem={({project}) => (
+           
              <View style={{flexDirection:'row', marginLeft:15}}> 
-              <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>project 1</Text>
-              <TouchableOpacity  onPress ={() => goToProject(1)}>
+              <Text style={[styles.FullName, {fontSize:18, marginRight:25}]} key = {key}>{project.name}</Text>
+              <TouchableOpacity  onPress ={() => goToProject(project.id)}>
                 <Icon  name="chevron-double-right" color={colors.text} size={50} />
               </TouchableOpacity> 
             </View>
-             )} 
-          /> 
+             
         </View>
+        )})}
+
         {/*  Specialist's Reviews */}
         <BottomSheet
           ref={sheetRef}
