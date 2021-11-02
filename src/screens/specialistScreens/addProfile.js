@@ -7,14 +7,112 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {colors} from "../../constants/palette";
 import {Picker} from '@react-native-picker/picker';
 import InputSpinner from "react-native-input-spinner";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_API_URL from '../../services/BaseUrl';
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default function addProfile({navigation}) {
 
     const [country, setCountry] = useState(null)
-    const [category, setCategory] = useState(null);
-    const [Experience, setExperience] = useState(null);
-    const [Currency, setCurrency] = useState(null);
+    const [category, setCategory] = useState("Electrician");
+    const [experience, setExperience] = useState(null);
+    const [currency, setCurrency] = useState("USD");
+    const [phone, setPhone] = useState(null);
+    const [price, setPrice] = useState(null);
+    const [profilePic, setProfilePic] = useState(null);
+    const [imageCode, setImageCode] = useState(null);
+    const [allcategories, setAllCategories] = useState(null);
+
+    const pickImage = async () => {
+      let pickedImage = await ImagePicker.launchImageLibraryAsync({
+        quality: 1,
+        base64: true
+      });
+      if (!pickedImage.cancelled) {
+        setImageCode(pickedImage.base64);
+        setProfilePic(pickedImage.uri); 
+      }
+    };
+
+    
+  const uploadProfiePhoto = async () => {
+    try {
+      const responsePhoto = await  axios.post(`${BASE_API_URL}/api/user/add-profile-pic`, {
+          "image" : imageCode
+        },
+        {headers:{
+          'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
+          }}
+      );
+      await AsyncStorage.setItem('profilePic', responsePhoto.data['profile_picture_url']);
+    } catch(error) {
+      console.log(error); 
+    }
+  }
+    
+   
+    //api to get all categories for thedrop dow list
+
+    
+  const addNewProfile = async () => {
+    console.log(country.name)
+    try{
+      const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-profile`,{  
+        "phone" : phone,
+        "experience" : experience,
+        "currency" : currency,
+        "price" : price,
+        "nationality" : country.name
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }}
+      );
+    }catch(error){
+      console.log(error);
+    }
+  
+  }
+
+  const addNewCategory = async () => {
+    try{
+     
+      const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-speciality`,{  
+        "speciality" : category,
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }}
+      );
+    }catch(error){
+      console.log(error);
+    }
+  
+  }
+
+  const saveHandler = ()=>{
+    addNewCategory();
+    addNewProfile();
+    navigation.navigate('BottomTabSp')
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'BottomTabSp' }],
+      });
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
 
     return (
       <View style={styles.container}>
@@ -30,7 +128,7 @@ export default function addProfile({navigation}) {
 
           <View style ={[styles.row, {justifyContent: "space-between"}]}>
             <Text style={{fontSize: 15}}> Add Profile Picture</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={pickImage}>
               <Icon name="add-photo-alternate" size={70} color={colors.text}/>
             </TouchableOpacity>
           </View>
@@ -40,7 +138,7 @@ export default function addProfile({navigation}) {
             <View style={style.box} >
             
               <CountryPicker
-                onSelect={(country) => setCountry(country)}
+                onSelect = {(country) => setCountry(country)}
                 withFlag
               />
               <Icon name="keyboard-arrow-down" size={35} color={colors.black}/>
@@ -50,8 +148,9 @@ export default function addProfile({navigation}) {
           <Text style= {style.attribute}> Phone:</Text>
           <View style={style.box}>
             <TextInput
-                placeholder="+961 ## ######"
-                placeholderTextColor= {colors.disabled_text}
+                placeholder ="+961########"
+                placeholderTextColor = {colors.disabled_text}
+                onChangeText = {(phone) => setPhone(phone)}
             />
           </View>
 
@@ -80,10 +179,8 @@ export default function addProfile({navigation}) {
               style={{marginHorizontal:12, marginVertical: 5}}
               colorMax={"#f04048"}
               colorMin={colors.primary}
-              value={Experience}
-              // onChange={(num) => {
-              //   console.log(num);
-              //}}
+              value={experience}
+              onChange={(num) => { setExperience(num)}} 
             />
             </View>
           </View>
@@ -96,6 +193,7 @@ export default function addProfile({navigation}) {
                     placeholder="10"
                     placeholderTextColor= {colors.disabled_text}
                     keyboardType='numeric'
+                    onChangeText = {(price) => setPrice(price)}
                 />
               </View>
               
@@ -107,7 +205,7 @@ export default function addProfile({navigation}) {
               <Picker 
                 style = {{ marginVertical: 10, marginHorizontal:10}}
                 placeholderTextColor = {colors.disabled_text}
-                selectedValue = {Currency}
+                selectedValue = {currency}
                 onValueChange={(itemValue, itemIndex) =>
                   setCurrency(itemValue)}
               >
@@ -123,13 +221,7 @@ export default function addProfile({navigation}) {
         <View style={{marginTop: 15}}>
           <MyButton 
             text ="Save"  
-            onPressFunction = {()=> {
-              navigation.navigate('BottomTabSp')
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'BottomTabSp' }],
-                });
-            }}
+            onPressFunction = {saveHandler}
           />
         </View>
 

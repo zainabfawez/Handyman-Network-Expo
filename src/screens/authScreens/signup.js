@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, CheckBox, View, TextInput, Image, SafeAreaView, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView, Alert, } from 'react-native';
+import { StyleSheet, Text, CheckBox, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Alert, ToastAndroid } from 'react-native';
 import MyButton from '../../components/MyButton';
 import styles from "../../constants/styles";
 import {colors, shadows} from "../../constants/palette";
@@ -8,7 +8,7 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import  {registerForPushNotificationsAsync} from '../specialistScreens/notifications'
 import * as Location from 'expo-location';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function signup({ navigation }) {
 
@@ -18,9 +18,9 @@ export default function signup({ navigation }) {
   const [password, setPassword] = useState(null);
   const [cpassword, setCPassword] = useState(null);
   const [isSelected, setSelection] = useState(false);
-  const [is_specialist, setIsSpecialist] = useState(0);
   const [pushNotificationToken, setPushNotificationToken] = useState(null);
-  const [bad_credentials, setidBadCredentials] = useState(null);
+  const [bad_credentials, setIdBadCredentials] = useState(null);
+  const [isSpecialist, setIsSpecialist] = useState(null);
 
    //for getting th current location
   const [location, setLocation] = useState(null);
@@ -35,7 +35,7 @@ export default function signup({ navigation }) {
       await Location.getCurrentPositionAsync({})
       .then((location)=>{
         setLocation(location)
-        Alert.alert("You're location is sent")});
+        ToastAndroid.show("you're location is sent",2000)});
      ;
     })();
   }
@@ -49,21 +49,22 @@ export default function signup({ navigation }) {
       }
       await registerForPushNotificationsAsync().then(async (token)=> {
         setPushNotificationToken(token)
-
         try {
-
-          const res = await axios.post(`${BASE_API_URL}/api/register`, {
+          const response = await axios.post(`${BASE_API_URL}/api/register`, {
             "first_name" : firstName,
             "last_name" : lastName,
             "email" : email,
             "password" :password,
             "password_confirmation": cpassword,
-            "is_specialist": isSelected,
+            "is_specialist": isSpecialist,
             "longitude" : location.coords.longitude,
             "latitude" : location.coords.latitude,
             "expoPushNotificationToken" : token,
-            
-          }).then((response)=> {
+          }).then(async(response)=> {
+              await AsyncStorage.setItem('token', response.data['access_token']);
+              await AsyncStorage.setItem('user_id', JSON.stringify(response.data['user']['id']));
+              await AsyncStorage.setItem('fullName', response.data['user']['first_name'] + ' ' + response.data['user']['last_name']);
+              setIdBadCredentials(null);
               if(response.data['user']['is_specialist']){
                 navigation.navigate('AddProfile');
                 navigation.reset({
@@ -79,36 +80,26 @@ export default function signup({ navigation }) {
               }  
           }) 
         } catch(err) {
-          setidBadCredentials("Check your informations");
+          setIdBadCredentials(1);
         }
       })
       
     }else{
-      setidBadCredentials("Please fill every required field!");
-      
+      setIdBadCredentials(1);
     }
   };
 
   return (
    
-    <ScrollView>
+    <ScrollView >
 
-   
-    <View style={styles.container}>
+    <View  style={styles.container}>
       <View style={style.bigCircle}></View>
       <View style={style.smallCircle}></View>
       <View style={style.centerizedView}>
         <View style={style.authBox}>
-          <View style={style.logoBox}>
-            <Icon
-              color='#fff'
-              name='tools'
-              size={35}
-            />
-          </View>
           <Text style={style.loginTitleText}>Register</Text>
           <View style={style.hr}></View>
-          <ScrollView>
           <View style={style.inputBox}>
             <Text style={style.inputLabel}>First Name</Text>
             <TextInput
@@ -164,20 +155,22 @@ export default function signup({ navigation }) {
               onChangeText={(cPassword) => setCPassword(cPassword)}
             />
           </View>
-
-          <MyButton
-            text = "Get current Location"
-            onPressFunction={() => onGetLocationPress()}
-          />
-          <View style={style.checkboxContainer}>
-          <CheckBox
-            value={isSelected}
-            onValueChange={(isSelected) => setSelection(isSelected)}
-            style={style.checkbox}
-          />
-          <Text style={style.label}>Register as Specialist?</Text>
+          <View style={{ marginTop: 12, width: '100%'}}>
+            <MyButton
+              style={{flex: 0.5}}
+              text = "Get current Location"
+              onPressFunction={() => onGetLocationPress()}
+            />
+            <View style={[style.checkboxContainer, {flex:0.5}]}>
+            <CheckBox
+              value={isSelected}
+              onValueChange={(isSelected) => setSelection(isSelected)}
+              style={style.checkbox}
+            />
+            <Text style={style.label}>Register as Specialist?</Text>
+            </View>
           </View>
-        </ScrollView>
+        
           <TouchableOpacity style={style.loginButton} onPress = {pressRegister}>
             <Text style={style.loginButtonText}>Register</Text>
           </TouchableOpacity>
@@ -190,11 +183,8 @@ export default function signup({ navigation }) {
         </View>
       </View>
     </View>
-    
-
+  
   </ScrollView>
-
-   
 
     );
   }
@@ -221,12 +211,11 @@ export default function signup({ navigation }) {
     },
     centerizedView: {
       width: '100%',
-      top: '5%',
     },
 
     checkboxContainer: {
       flexDirection: "row",
-      marginBottom: 20,
+      marginTop: 12,
     },
 
     checkbox: {
@@ -250,7 +239,7 @@ export default function signup({ navigation }) {
       },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
-      elevation: 5,
+      elevation: 4,
     },
     logoBox: {
       width: 70,
@@ -301,7 +290,9 @@ export default function signup({ navigation }) {
       backgroundColor: colors.primary_dark,
       marginTop: 10,
       paddingVertical: 10,
-      borderRadius: 4,
+      borderRadius: 5,
+      marginTop: 15
+    
     },
     loginButtonText: {
       color: '#fff',
@@ -311,8 +302,9 @@ export default function signup({ navigation }) {
     },
     registerText: {
       textAlign: 'center',
-      marginTop: 20,
+      marginTop: 12,
       fontSize: 16,
+      bottom: 10,
     },
 
   });

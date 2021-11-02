@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { Text, View, Image, ScrollView, Platform, Button, Alert, Modal, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, Image, ScrollView, Modal, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -7,7 +7,6 @@ import styles from "../../constants/styles";
 import { colors } from '../../constants/palette';
 import DisplayProjects from '../../components/DisplayProjects';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
@@ -72,14 +71,12 @@ export default function projectSp({navigation}) {
       'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
     }}
     );
-    if(responseTip.data.status){
-      async () => {pushTokens.map(async(pushToken, key) =>  {
-        return(
-        key={key},
-        await sendPushNotification(pushToken, "A new Tip has been added", "newTip")
-        )})}
-        setModalTipVisible(false)
-    }
+    async () => {pushTokens.map(async(pushToken, key) =>  {
+      return(
+      key={key},
+      await sendPushNotification(pushToken, "A new Tip has been added", "newTip")
+      )})}
+      setModalTipVisible(false)
   }
 
   const getProjects = async () => {
@@ -120,10 +117,8 @@ export default function projectSp({navigation}) {
   }
 
   const goToPhotos = (project_id)=>{
-    navigation.navigate('photos',{project_id:project_id})
+    navigation.navigate('Photos',{project_id:project_id})
   }
-
-
 
   useEffect(() => {
     getName();
@@ -151,7 +146,7 @@ export default function projectSp({navigation}) {
             <Text style={styles.FullName}>  {fullName} </Text> 
             <Text style={styles.SpName}>  {speciality[0].name} </Text>
             <View style={{flexDirection: 'row', marginTop: 5}}>
-              <Text style={{marginLeft: 25, fontSize: 16}}> {rating}  </Text>
+              <Text style={{marginLeft: 25, fontSize: 16}}> {rating} </Text>
               <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
             </View>  
           </View>

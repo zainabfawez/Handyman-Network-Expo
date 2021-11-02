@@ -12,27 +12,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function addProjectSp({navigation}) {
 
-    const [selectedCurrency, setSelectedCurrency] = useState(null);
+    const [selectedCurrency, setSelectedCurrency] = useState("USD");
     const [isDone, setIsDone] = useState(false);
     const [projectName, setProjectName] = useState(null);
     const [description, setDescription] = useState(null);
     const [totalCost, setTotalCost] = useState(null);
-
+    //console.log(projectName)
     const addNewProject = async () => {
-      const responseNewProject = await  axios.post(`${BASE_API_URL}/api/add-project`,{  
-        "name": projectName,
-        "description" : description,
-        "total_cost" : totalCost,
-        "is_done" : isDone,
-        "currency" : selectedCurrency,
+      try{
+        console.log( selectedCurrency)
+        const responseNewProject = await  axios.post(`${BASE_API_URL}/api/add-project`,{  
+          "name": projectName,
+          "description" : description,
+          "total_cost" : totalCost,
+          "is_done" : isDone, 
+          "currency" : "USD",
+        },
+        {headers:{
+          'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+        }}
+        );
+        console.log(responseNewProject.data);
+        navigation.navigate('Projects');
+      }catch(error){
+        console.log(error);
+      }
      
-      },
-      {headers:{
-        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-      }}
-      );
-      console.log(responseNewProject);
-      navigation.navigate('Projects');
+     
     }
   
   
@@ -50,6 +56,7 @@ export default function addProjectSp({navigation}) {
             <TextInput
               style={style.input}
               placeholder="Project's Name"
+              returnKeyType="next" 
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(projectName) => setProjectName(projectName)}
             />
@@ -57,10 +64,11 @@ export default function addProjectSp({navigation}) {
 
           <View style={{marginTop:20}}>
             <Text style={style.inputLabel}>Description</Text>
-            <TextInput 
+            <TextInput
               style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'},]} 
               multiline={true}
               placeholder={"Describe your project"}
+              returnKeyType="next" 
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(description) => setDescription(description)}
             />
@@ -72,6 +80,7 @@ export default function addProjectSp({navigation}) {
               <TextInput
                 style={style.input}
                 placeholder="TotalCost"
+                returnKeyType="next" 
                 placeholderTextColor= {colors.disabled_text}
                 onChangeText={(totalCost) => setTotalCost(totalCost)}
               />
@@ -106,7 +115,7 @@ export default function addProjectSp({navigation}) {
         <View style = {{  width: '100%', marginLeft: 8 }}>
           <MyButtonDark
               text = "save"
-              onPressFunction = {() => {addNewProject }}
+              onPressFunction =  {addNewProject}
           />
         </View>
       </View>

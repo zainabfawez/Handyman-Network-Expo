@@ -14,7 +14,7 @@ import chatCli from './src/screens/clientScreens/chatCli';
 import homeCli from './src/screens/clientScreens/homeCli';
 import profileSp from './src/screens/clientScreens/profileSp';
 import projectCli from './src/screens/clientScreens/projectCli';
-import whatNewCli from './src/screens/clientScreens/whatNewCli';
+import tips from './src/screens/clientScreens/tips';
 import settingCli from './src/screens/clientScreens/settingCli';
 import login from './src/screens/authScreens/login';
 import signup from './src/screens/authScreens/signup';
@@ -76,7 +76,7 @@ function bottomTabScreenCli() {
               />
             ),
           }} />
-        <TabCli.Screen name="WhatNewCli" component={whatNewCli} options={{
+        <TabCli.Screen name="Tips" component={tips} options={{
             title: 'Tips',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
@@ -175,7 +175,6 @@ export default function App() {
         AsyncStorage.getItem('role')
         .then(role => {
           if (role == "specialist"){
-            //api call to get profile if empty set initial route addprofile else
             setInitialRoute("BottomTabSp")
           } else {
             setInitialRoute("BottomTabCli")

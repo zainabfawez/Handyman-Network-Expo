@@ -14,46 +14,32 @@ export default function login({ navigation }) {
 
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [bad_credentials, setidBadCredentials] = useState(null);
+  const [bad_credentials, setIdBadCredentials] = useState(null);
  
   const pressLogin = async () => {
     try {
-      const res = await  axios.post(`${BASE_API_URL}/api/login`, {
+      const response = await  axios.post(`${BASE_API_URL}/api/login`, {
         "email" : email,
         "password":password
       });
-      await AsyncStorage.setItem('token', res.data['access_token']);
-      await AsyncStorage.setItem('user_id', JSON.stringify(res.data['user']['id']));
-      await AsyncStorage.setItem('fullName', res.data['user']['first_name'] + ' ' + res.data['user']['last_name']);
-     
-      setidBadCredentials(null);
-      if (res.data['user']['is_specialist']){
-        //geting profile of specialist, if empty navigate to Add profile
-        // async () =>{
-        //   try {
-        //     const response = await  axios.get(`${BASE_API_URL}/api/getprofile`, 
-        //     {headers:{
-        //       'Authorization' : `Bearer ${res.data['access_token']}`
-        //     }}
-        //     );
-           
-        //     if(!response.data){
-        //       navigation.navigate('AddProfile');
-        //       console.log("fe profile");
-        //     }else{
-              navigation.navigate('BottomTabSp');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'BottomTabSp' }],
-              });
-          //     console.log('ma fe profile');
-
-          //   }
-          // }catch(e) {
-          //       console.log("error");    
-          //   }
-        
-        //}
+      await AsyncStorage.setItem('token', response.data['access_token']);
+      await AsyncStorage.setItem('user_id', JSON.stringify(response.data['user']['id']));
+      await AsyncStorage.setItem('fullName', response.data['user']['first_name'] + ' ' + response.data['user']['last_name']);
+      setIdBadCredentials(null);
+      if (response.data['user']['is_specialist']){
+        if (!response.data['user']['added_profile']){
+          navigation.navigate('AddProfile');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'AddProfile' }],
+            });
+        }else{
+          navigation.navigate('BottomTabSp');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'BottomTabSp' }],
+          });
+        }
       }else{
         navigation.navigate('BottomTabCli');
         navigation.reset({
@@ -61,9 +47,9 @@ export default function login({ navigation }) {
           routes: [{ name: 'BottomTabCli' }],
           });
       }   
-    } catch(err) {
-      setidBadCredentials(1);
-      console.log(err);
+    } catch(error) {
+      setIdBadCredentials(1);
+      console.log(error);
     }
   };
 
@@ -88,7 +74,6 @@ export default function login({ navigation }) {
               <Text style={style.inputLabel}>Email</Text>
               <TextInput
                 style={style.input}
-                //autoCapitalize={false}
                 keyboardType='email-address'
                 textContentType='emailAddress'
                 placeholder='example@mail.com'
@@ -100,7 +85,6 @@ export default function login({ navigation }) {
               <Text style={style.inputLabel}>Password</Text>
               <TextInput
                 style={style.input}
-                //autoCapitalize={false}
                 secureTextEntry={true}
                 textContentType='password'
                 placeholder='Must have at  least 6 characters'

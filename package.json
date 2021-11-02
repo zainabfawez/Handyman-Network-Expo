@@ -42,7 +42,8 @@
     "react-native-swiper": "^1.6.0-rc.3",
     "react-native-web-swiper": "^2.2.1",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
-    "rn-placeholder": "^3.0.3"
+    "rn-placeholder": "^3.0.3",
+    "expo-image-picker": "~10.2.2"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

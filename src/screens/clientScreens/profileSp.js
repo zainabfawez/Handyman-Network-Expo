@@ -1,5 +1,5 @@
 import React, {useState, useEffect } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert,  Modal, TextInput, FlatList } from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert,  Modal, TextInput, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -28,6 +28,8 @@ export default function profileSp({navigation, route}) {
   const [projects, setProjects] = useState(null);
   const [comments, setComments] = useState(null);
   const sheetRef = React.useRef(null);
+  const [newRating, setNewRating] = useState(null);
+  const [newReview, setNewReview] = useState(null);
 
   const goToProject = (project_id)=>{
     navigation.navigate('projectCli',{project_id:project_id})
@@ -54,6 +56,34 @@ export default function profileSp({navigation, route}) {
       }}
     );
     setInfo(responseInfo.data);  
+  }
+
+  const addNewRate = async () => {
+    const responseNewRate = await  axios.post(`${BASE_API_URL}/api/rate-specialist`,{  
+      "rate": newRating,
+      "specialist_id" : `${specialist_id}`,
+    },
+    {headers:{
+      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+    }}
+    );
+  }
+
+  const addNewReview = async () => {
+    const responseNewReview = await  axios.post(`${BASE_API_URL}/api/comment-specialist`,{  
+      "comment": newReview,
+      "specialist_id" : `${specialist_id}`,
+    },
+    {headers:{
+      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+    }}
+    );
+  }
+
+  const saveHandler = ()=>{
+    addNewRate();
+    addNewReview();
+    setModalRateVisible(false);
   }
 
   const getSpecialistProfile = async () => {
@@ -118,9 +148,9 @@ export default function profileSp({navigation, route}) {
       <Text>Swipe down to close</Text>  
       {comments.map((comment, key) => {
         return(
-          <Card>
+          <Card  key={key}>
             <View>
-              <Text  key={key} style={{fontWeight: 'bold', fontSize: 12}}> {comment.first_name} {comment.last_name}</Text>
+              <Text  style={{fontWeight: 'bold', fontSize: 12}}> {comment.first_name} {comment.last_name}</Text>
               <Text>{comment.comment}</Text>
             </View>
           </Card>
@@ -144,7 +174,6 @@ export default function profileSp({navigation, route}) {
     }else{
      
       return (
-        console.log(rating),
         <View style={styles.container}>
           <View >
             <View style={{flexDirection: 'row'}}>
@@ -254,7 +283,8 @@ export default function profileSp({navigation, route}) {
                             <View>
                               <Rating
                                 onFinishRating={(rating) => {
-                                  Alert.alert('Star Rating: ' + JSON.stringify(rating));
+                                  ToastAndroid.show("You're rate is: "+JSON.stringify(rating), 2000);
+                                  setNewRating(rating);
                                 }}
                                 style={{ paddingVertical: 10 }}
                               />
@@ -266,7 +296,7 @@ export default function profileSp({navigation, route}) {
                                 multiline={true}
                                 placeholder={"You're review goes here"}
                                 placeholderTextColor= {colors.disabled_text}
-                                  // onChangeText={(projectName) => setFirstName(projectName)}
+                                onChangeText={(review) => setNewReview(review)}
                             />
                             <View style={{flexDirection: "row", justifyContent : "space-around"}}>
                                 <MyButtonGray
@@ -275,7 +305,7 @@ export default function profileSp({navigation, route}) {
                                 />
                                 <MyButtonDark
                                     text = "save"
-                                    onPressFunction = {() => setModalRateVisible(false)}
+                                    onPressFunction = {saveHandler}
                                 />
           
                             </View>

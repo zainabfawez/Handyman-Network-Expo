@@ -30,34 +30,46 @@ export default function homeCli({navigation}) {
         }}
       );
       setClient(responseProfile.data);
-    }catch(e) {
-          console.log("error");         
+    }catch(error) {
+          console.log(error);         
       }
   }
 
   const getAllSpecialists = async () => {
-    const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`,  
-    {headers:{
-      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }}
-    );
-    setSpecialists(responseSpecialists.data);  
+    try{
+      const responseSpecialists = await  axios.get(`${BASE_API_URL}/api/get-specialist-map-info`,  
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }}
+      );
+      setSpecialists(responseSpecialists.data);  
+    }catch(error){
+      console.log(error);
+    }
+    
   }
+  
 
   const getSearchedSpecialists = async () => {
-    const responseSearch = await  axios.post(`${BASE_API_URL}/api/search-speciality`,  
-    {
-      "speciality" : searchSpeciality
-    },
-    {headers:{
-      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }}
-    );
-    if (responseSearch.data.status){
-      Alert.alert('No Search Results');
-    }else{
-      setSpecialists(responseSearch.data);  
+    try{
+      const responseSearch = await  axios.post(`${BASE_API_URL}/api/search-speciality`,  
+      {
+        "speciality" : searchSpeciality
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }}
+      );
+      if (responseSearch.data.status){
+        Alert.alert('No Search Results');
+      }else{
+        setSpecialists(responseSearch.data); 
+        console.log(responseSearch.data);
+      }
+    }catch(error){
+      console.log(error);
     }
+  
   }
    
 
@@ -75,7 +87,7 @@ export default function homeCli({navigation}) {
   }else{
 
     return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    
       <View style={style.container}> 
         <MapView
           showsUserLocation
@@ -110,19 +122,18 @@ export default function homeCli({navigation}) {
           <TextInput 
             placeholder="Search here"
             placeholderTextColor={colors.disabled_text}
-            onPressOut={Keyboard.dismiss()}
             autoCapitalize="none" 
             style={{flex:1,padding:0}}
-            //onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
+            onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
           />
-          <TouchableOpacity >  
-            {/* onPress={()=>getSearchedSpecialists} */}
+          <TouchableOpacity   
+            onPress={()=>getSearchedSpecialists}>
             <Icon name="ios-search" size={25}  color={colors.primary_dark}/>
           </TouchableOpacity>
        </View>
 
       </View>
-    </TouchableWithoutFeedback>
+ 
     );
   }
 }

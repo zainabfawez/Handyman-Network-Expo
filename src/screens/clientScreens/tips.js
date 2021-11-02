@@ -12,7 +12,7 @@ import Loading from '../../components/loading';
 
 
 
-export default function whatNewCli() {
+export default function tips() {
 
   const [tips, setTips] = useState(null);
 
@@ -47,7 +47,7 @@ export default function whatNewCli() {
 
            {tips.map((tip, key) => {
               return(
-                <Card key={key}>
+                <Card key={key} style={{paddingLeft: 5}}>
                 
                   <View style={{ flexDirection: 'row' }}>
                     <Image
@@ -74,7 +74,7 @@ export default function whatNewCli() {
       paddingTop: 20,
       backgroundColor: 'white',
       paddingVertical: 10
-      
+
     },
   
   });
