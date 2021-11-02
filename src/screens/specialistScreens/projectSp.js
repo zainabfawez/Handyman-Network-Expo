@@ -12,7 +12,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
-import {sendPushNotification} from './notifications'
+import {sendPushNotification} from './notifications';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 Notifications.setNotificationHandler({
@@ -60,7 +61,7 @@ export default function projectSp({navigation}) {
       }} 
     );
     setSpeciality(responseSpeciality.data);  
-    console.log(responseSpeciality.data)
+  
   }
 
   const addNewTip = async () => {
@@ -115,12 +116,14 @@ export default function projectSp({navigation}) {
     }else{
       setRating(responseRating.data);  
     }
-    console.log(responseRating.data)
+   
   }
 
   const goToPhotos = (project_id)=>{
     navigation.navigate('photos',{project_id:project_id})
   }
+
+
 
   useEffect(() => {
     getName();
@@ -137,8 +140,8 @@ export default function projectSp({navigation}) {
   }else{
 
     return (
-      console.log(fullName, id, speciality, rating, projects),
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
+      <View >
         <View style={{flexDirection: 'row'}}>
           <Image
                 style={styles.ProfileImg} 
@@ -159,7 +162,7 @@ export default function projectSp({navigation}) {
           <Text style={style.projText}>Projects</Text>
         </View>
          
-          <ScrollView >
+         
           {projects.map((project, key) => {
             return(
               <DisplayProjects 
@@ -169,8 +172,7 @@ export default function projectSp({navigation}) {
                 onPressFunction = {() =>{ goToPhotos(project.id) }}
                 />
             )})}
-          </ScrollView>
-
+         
         </View>
 
         {/* Modal to add a tip */}
@@ -218,7 +220,7 @@ export default function projectSp({navigation}) {
             </Modal>
         </View>
 
-        <View style={{flexDirection: "row", justifyContent : "space-around",}}>
+        <View style={{flexDirection: "row", justifyContent : "space-around", }}>
           <View style={{"flex":0.5, margin :15}}>
             <MyButtonDark
                 text = "new Project"
@@ -236,6 +238,7 @@ export default function projectSp({navigation}) {
         </View>
      
       </View>
+      </ScrollView>
     );
   }
 

@@ -1,16 +1,43 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, TouchableOpacity, TextInput, StyleSheet} from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, StyleSheet, CheckBox, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import MyButtonDark from '../../components/MyButtonDark';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import BASE_API_URL from '../../services/BaseUrl';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function addProjectSp({navigation}) {
+
     const [selectedCurrency, setSelectedCurrency] = useState(null);
-    
+    const [isDone, setIsDone] = useState(false);
+    const [projectName, setProjectName] = useState(null);
+    const [description, setDescription] = useState(null);
+    const [totalCost, setTotalCost] = useState(null);
+
+    const addNewProject = async () => {
+      const responseNewProject = await  axios.post(`${BASE_API_URL}/api/add-project`,{  
+        "name": projectName,
+        "description" : description,
+        "total_cost" : totalCost,
+        "is_done" : isDone,
+        "currency" : selectedCurrency,
+     
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }}
+      );
+      console.log(responseNewProject);
+      navigation.navigate('Projects');
+    }
+  
+  
     return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={[styles.container,{marginHorizontal:10}]}>
       
         <TouchableOpacity>
@@ -24,7 +51,7 @@ export default function addProjectSp({navigation}) {
               style={style.input}
               placeholder="Project's Name"
               placeholderTextColor= {colors.disabled_text}
-              // onChangeText={(projectName) => setFirstName(projectName)}
+              onChangeText={(projectName) => setProjectName(projectName)}
             />
           </View>
 
@@ -35,7 +62,7 @@ export default function addProjectSp({navigation}) {
               multiline={true}
               placeholder={"Describe your project"}
               placeholderTextColor= {colors.disabled_text}
-              // onChangeText={(projectName) => setFirstName(projectName)}
+              onChangeText={(description) => setDescription(description)}
             />
           </View>
 
@@ -46,7 +73,7 @@ export default function addProjectSp({navigation}) {
                 style={style.input}
                 placeholder="TotalCost"
                 placeholderTextColor= {colors.disabled_text}
-                // onChangeText={(projectName) => setFirstName(projectName)}
+                onChangeText={(totalCost) => setTotalCost(totalCost)}
               />
           </View>
             
@@ -65,17 +92,25 @@ export default function addProjectSp({navigation}) {
             </View>
           </View>
 
+          <View style={style.checkboxContainer}>
+          <CheckBox
+            value={isDone}
+            onValueChange={(isDone) => setIsDone(isDone)}
+            style={style.checkbox}
+          />
+            <Text style={{margin:8}}>Done?</Text>
+          </View>
+
         </View>
 
-        <View style = {{ position: 'absolute', bottom:25, width: '100%', marginLeft: 8 }}>
+        <View style = {{  width: '100%', marginLeft: 8 }}>
           <MyButtonDark
               text = "save"
-              onPressFunction={() => {navigation.navigate('Projects'); }}
+              onPressFunction = {() => {addNewProject }}
           />
         </View>
-        
-
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -95,4 +130,15 @@ export default function addProjectSp({navigation}) {
       borderRadius: 4,
       paddingHorizontal: 10,
     },
+
+    checkboxContainer: {
+      flexDirection: "row",
+      marginVertical: 20,
+
+    },
+
+    checkbox: {
+      alignSelf: "center",
+    },
+
 });
