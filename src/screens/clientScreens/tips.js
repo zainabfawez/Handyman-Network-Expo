@@ -11,7 +11,6 @@ import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
 
 
-
 export default function tips() {
 
   const [tips, setTips] = useState(null);
@@ -29,11 +28,11 @@ export default function tips() {
   
   }
 
-  useFocusEffect( React.useCallback(() => {
-    getTips();
-    }, []))
 
- 
+    useEffect(() => {
+      getTips();
+    }, []);
+  
 
     if (!tips){
       return (

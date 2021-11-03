@@ -78,14 +78,10 @@ export default function projectSp({navigation}) {
     },
     {headers:{
       'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }}
-    );
-    // {pushTokens.map(async(pushToken, key) =>  {
-    //   return(
-    //   key={key},
-    console.log(pushTokens[0]);
-      async()=>{await sendPushNotification(pushTokens[0].expoPushNotificationToken, "A new Tip has been added", "newTip")}
-      //)})}
+    }});
+    {pushTokens.map(async(pushToken) =>  {
+        await sendPushNotification(pushToken.expoPushNotificationToken, "A new Tip has been added", "newTip")
+    })}
       setModalTipVisible(false)
   }
 

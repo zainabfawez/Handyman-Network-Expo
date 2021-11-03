@@ -160,9 +160,6 @@ export default function profileSp({navigation, route}) {
     </View>
   );
   
-  // useFocusEffect( React.useCallback(() => {
-  //   getSpecialistProfile();
-  //   }, []))
 
   useEffect(() => {
     getSpecialistProfile();
@@ -170,7 +167,7 @@ export default function profileSp({navigation, route}) {
     getAverageRate();
     getProjects();
     getComments();
-  }, [profile])
+  }, [])
 
   
     if (!(profile && info && projects && rating && comments)){
@@ -179,7 +176,6 @@ export default function profileSp({navigation, route}) {
       );
     }else{    
       return (
-        //console.log(profile[0]),
         <View style={styles.container}>
           <View >
             <View style={{flexDirection: 'row'}}>
