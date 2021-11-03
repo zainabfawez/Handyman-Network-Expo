@@ -9,8 +9,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-import chatCli from './src/screens/clientScreens/chatCli';
 import homeCli from './src/screens/clientScreens/homeCli';
 import profileSp from './src/screens/clientScreens/profileSp';
 import projectCli from './src/screens/clientScreens/projectCli';
@@ -19,7 +17,7 @@ import settingCli from './src/screens/clientScreens/settingCli';
 import login from './src/screens/authScreens/login';
 import signup from './src/screens/authScreens/signup';
 import settingSp from './src/screens/specialistScreens/settingSp';
-import chatSp from './src/screens/specialistScreens/chatSp';
+import calendarSp from './src/screens/specialistScreens/calendarSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
 import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
@@ -29,7 +27,6 @@ const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
 const HomeStackCli = createNativeStackNavigator();
 const ProjectsStackSp = createNativeStackNavigator();
-
 
 function HomeStackScreenCli() {
   return (
@@ -60,17 +57,6 @@ function bottomTabScreenCli() {
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
                 name={"home"}
-                size={28}
-                color={color}
-              />
-            ),
-          }} />
-        <TabCli.Screen name="ChatCli" component={chatCli}  options={{
-            title: 'Chat',
-            headerShown: false,
-            tabBarIcon: ({ focused, color, size }) => (
-              <MaterialCommunityIcons
-                name={"chat"}
                 size={28}
                 color={color}
               />
@@ -138,12 +124,12 @@ function bottomTabScreenSp() {
               />
             ),
           }}  />
-        <TabSp.Screen name="ChatSp" component={chatSp}  options={{
-            title: 'Chat',
+        <TabSp.Screen name="Calendar" component={calendarSp}  options={{
+            title: 'calendar',
             headerShown: false,
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
-                name={"chat"}
+                name={"calendar"}
                 size={28}
                 color={color}
               />

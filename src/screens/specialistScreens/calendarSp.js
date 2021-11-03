@@ -3,10 +3,10 @@ import { Text, View } from 'react-native';
 import styles from "../../constants/styles";
 
 
-export default function chatCli() {
+export default function celenderSp() {
     return (
       <View style={styles.container}>
-        <Text>chat screen</Text>
+        <Text>calendar screen</Text>
       </View>
     );
   }

@@ -14,6 +14,8 @@ import { Card } from 'react-native-elements';
 import Loading from '../../components/loading';
 import EmptyState from '../../components/EmptyState';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function profileSp({navigation, route}) {
@@ -34,6 +36,7 @@ export default function profileSp({navigation, route}) {
   const goToProject = (project_id)=>{
     navigation.navigate('projectCli',{project_id:project_id})
   }
+
 
   const triggerCall = () => {
     // Check for perfect 12 digit length
@@ -134,7 +137,6 @@ export default function profileSp({navigation, route}) {
     }else{
       setComments(responseComments.data); 
     }
-   
   }
 
   const renderComments = () => (
@@ -157,6 +159,10 @@ export default function profileSp({navigation, route}) {
         )})}
     </View>
   );
+  
+  // useFocusEffect( React.useCallback(() => {
+  //   getSpecialistProfile();
+  //   }, []))
 
   useEffect(() => {
     getSpecialistProfile();
@@ -164,22 +170,22 @@ export default function profileSp({navigation, route}) {
     getAverageRate();
     getProjects();
     getComments();
-  }, [])
+  }, [profile])
 
   
     if (!(profile && info && projects && rating && comments)){
       return (
        <Loading/>
       );
-    }else{
-     
+    }else{    
       return (
+        //console.log(profile[0]),
         <View style={styles.container}>
           <View >
             <View style={{flexDirection: 'row'}}>
               <Image
                   style={styles.ProfileImg} 
-                  source={require( '../../../assets/profilePic.png')}
+                  source={{uri:`${BASE_API_URL}${profile[0].profile_picture_url}`}}
               />
                   {/* Full name and Speciality and Info*/}
               <View style={{marginLeft: 15}}>
@@ -216,7 +222,7 @@ export default function profileSp({navigation, route}) {
               <View style={styles.VerticleLine}></View>
               <TouchableOpacity>
                   <View >
-                    <Icon name="chat" color={colors.primary} size={30} />
+                    <Icon name="calendar" color={colors.primary} size={30} />
                   </View>
               </TouchableOpacity>
             </View>
@@ -234,19 +240,19 @@ export default function profileSp({navigation, route}) {
           <View  style={style.proj}>
             <Text style={style.projText}>Projects</Text>
           </View>
-          {projects.map((project, key) => {
+          <ScrollView>
+            {projects.map((project, key) => {
               return(
-          <View>
-           
-             <View style={{flexDirection:'row', marginLeft:15}}> 
-              <Text style={[styles.FullName, {fontSize:18, marginRight:25}]} key = {key}>{project.name}</Text>
-              <TouchableOpacity  onPress ={() => goToProject(project.id)}>
-                <Icon  name="chevron-double-right" color={colors.text} size={50} />
-              </TouchableOpacity> 
-            </View>
-             
-        </View>
-        )})}
+                <View key={key}>
+                  <View style={{flexDirection:'row', marginLeft:15, justifyContent:'space-evenly'}}> 
+                    <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>{project.name}</Text>
+                    <TouchableOpacity  onPress ={() => goToProject(project.id)}>
+                      <Icon  name="chevron-double-right" color={colors.text} size={50} />
+                    </TouchableOpacity> 
+                  </View> 
+                </View>
+          )})}
+        </ScrollView>
 
         {/*  Specialist's Reviews */}
         <BottomSheet

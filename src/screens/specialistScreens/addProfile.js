@@ -131,6 +131,10 @@ export default function addProfile({navigation}) {
             <TouchableOpacity onPress={pickImage}>
               <Icon name="add-photo-alternate" size={70} color={colors.text}/>
             </TouchableOpacity>
+            <TouchableOpacity  onPress = {uploadProfiePhoto} >
+              <Text style={{color : colors.green}}>Upload Image</Text>
+            </TouchableOpacity>
+          
           </View>
           
           <Text style={ {marginLeft:10, fontSize: 15}}>Nationality:</Text>

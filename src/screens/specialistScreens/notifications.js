@@ -14,14 +14,14 @@ Notifications.setNotificationHandler({
 
 export default function Notification() {
     
-  // copy fisrt 1 in login and reg
+
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   useEffect(() => {
-    // copy only this line and put in use effect
+    
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     // This listener is fired whenever a notification is received while the app is foregrounded
@@ -75,8 +75,6 @@ export async function sendPushNotification(expoPushToken, body, title) {
 }
 
 
-// import this function in login aND REGISTRATION
- 
  export async function registerForPushNotificationsAsync() {
     let token;
     if (Constants.isDevice) {

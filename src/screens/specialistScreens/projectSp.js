@@ -34,14 +34,8 @@ export default function projectSp({navigation}) {
   const [pushTokens, setPushTokens] = useState(null);
   const [newTip, setNewTip] = useState(null);
   const [projects, setProjects] = useState(null);
+  const [imageSource, setImageSource] = useState(null);
   
-  
-  //for push notifications
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
   const getName = async () => {
     try {
       setFullName( await AsyncStorage.getItem('fullName'));
@@ -59,9 +53,24 @@ export default function projectSp({navigation}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
     );
+    
     setSpeciality(responseSpeciality.data);  
-  
   }
+
+  
+  const getProfilePic = async () => {
+    const  responseImageSource = await  axios.get(`${BASE_API_URL}/api/get-profile-pic?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }} 
+    );
+    if (responseImageSource.data == 'null' || responseImageSource.data == "nothing"){
+      setImageSource('../../../assets/profilePic.png')
+    }else{
+      setImageSource(responseImageSource.data);  
+    }
+  }
+
 
   const addNewTip = async () => {
     const responseTip = await  axios.post(`${BASE_API_URL}/api/add-tip`,{  
@@ -71,11 +80,12 @@ export default function projectSp({navigation}) {
       'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
     }}
     );
-    async () => {pushTokens.map(async(pushToken, key) =>  {
-      return(
-      key={key},
-      await sendPushNotification(pushToken, "A new Tip has been added", "newTip")
-      )})}
+    // {pushTokens.map(async(pushToken, key) =>  {
+    //   return(
+    //   key={key},
+    console.log(pushTokens[0]);
+      async()=>{await sendPushNotification(pushTokens[0].expoPushNotificationToken, "A new Tip has been added", "newTip")}
+      //)})}
       setModalTipVisible(false)
   }
 
@@ -113,7 +123,6 @@ export default function projectSp({navigation}) {
     }else{
       setRating(responseRating.data);  
     }
-   
   }
 
   const goToPhotos = (project_id)=>{
@@ -126,21 +135,21 @@ export default function projectSp({navigation}) {
     getAverageRate();
     getPushTokens();
     getProjects();
+    getProfilePic();
   }, []);
 
-  if (!(fullName && speciality && rating && pushTokens && projects )){
+  if (!(fullName && speciality && rating && pushTokens && projects && imageSource)){
     return (
      <Loading/>
     );
   }else{
-
     return (
       <ScrollView style={styles.container}>
       <View >
         <View style={{flexDirection: 'row'}}>
           <Image
-                style={styles.ProfileImg} 
-                source={require( '../../../assets/profilePic.png')}
+            style={styles.ProfileImg} 
+            source={{ uri: `${BASE_API_URL}${imageSource.profile_picture_url}` }}
           />
           <View >
             <Text style={styles.FullName}>  {fullName} </Text> 

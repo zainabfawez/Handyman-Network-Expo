@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert} from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert, Button} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MapView ,{ Callout, Marker } from 'react-native-maps';
 import { colors } from "../../constants/palette";
@@ -15,8 +15,14 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 export default function homeCli({navigation}) {
 
   const [client, setClient] = useState(null);
-  const[specialists,setSpecialists] = useState(null);
+  const [specialists,setSpecialists] = useState(null);
+  const [searchedSpecialists, setSearchedSpecialists] = useState(null);
   const [searchSpeciality, setSearchSpeciality] = useState(null);
+  const [coordinates, setCoordinates] = useState({
+    latitude : 33.848427, 
+    longitude :  35.518832,
+    latitudeDelta: 0.022, 
+    longitudeDelta: 0.0421 });
 
   const goToProfile = (specialist_id, speciality)=>{
     navigation.navigate('ProfileSp',{specialist_id:specialist_id, speciality:speciality})
@@ -30,6 +36,10 @@ export default function homeCli({navigation}) {
         }}
       );
       setClient(responseProfile.data);
+      setCoordinates({latitude : 33.848427, 
+                      longitude :  35.518832,
+                      latitudeDelta: 0.022, 
+                      longitudeDelta: 0.0421 })
     }catch(error) {
           console.log(error);         
       }
@@ -49,8 +59,8 @@ export default function homeCli({navigation}) {
     
   }
   
-
   const getSearchedSpecialists = async () => {
+    console.log("hi");
     try{
       const responseSearch = await  axios.post(`${BASE_API_URL}/api/search-speciality`,  
       {
@@ -63,7 +73,8 @@ export default function homeCli({navigation}) {
       if (responseSearch.data.status){
         Alert.alert('No Search Results');
       }else{
-        setSpecialists(responseSearch.data); 
+        setSearchedSpecialists(responseSearch.data); 
+        setSpecialists(null);
         console.log(responseSearch.data);
       }
     }catch(error){
@@ -71,34 +82,43 @@ export default function homeCli({navigation}) {
     }
   
   }
-   
+  
+  useEffect(() => {
+    getUserProfile();
+    getAllSpecialists();
+  }, [])
 
 
-  useFocusEffect( React.useCallback(() => {
-      getUserProfile();
-      getAllSpecialists();
-      }, [specialists]))
-
-
-  if (!(specialists && client)){
+  if (!( client)){
     return (
      <Loading/>
     );
   }else{
+      return (
+        <View style={style.container}> 
+          <MapView
+            showsUserLocation
+            style={style.map}
+            region={coordinates}   
+          >
+              {specialists && !searchedSpecialists && specialists.map((specialist, key) => {
+                return(
+                  <Marker 
+                  key={key}
+                  coordinate={{
+                    latitude: parseFloat(specialist.latitude),  
+                    longitude: parseFloat(specialist.longitude),     
+                  }}> 
+                    <Callout onPress = {() => {goToProfile(specialist.id, specialist.speciality)}}>
+                      <View>
+                        <Text style={{fontWeight:'bold'}}>{specialist.first_name} {specialist.last_name}</Text>
+                        <Text>{specialist.speciality}</Text>
+                      </View>
+                    </Callout>
+                </Marker>
+              )})}
 
-    return (
-    
-      <View style={style.container}> 
-        <MapView
-          showsUserLocation
-          style={style.map}
-          region={{ 
-            latitude : 33.848427, 
-            longitude :  35.518832,
-            latitudeDelta: 0.022, 
-            longitudeDelta: 0.0421 }}
-        >
-            {specialists.map((specialist, key) => {
+            {!specialists && searchedSpecialists && searchedSpecialists.map((specialist, key) => {
               return(
                 <Marker 
                 key={key}
@@ -113,29 +133,32 @@ export default function homeCli({navigation}) {
                     </View>
                   </Callout>
               </Marker>
-            )})}
+              )})}
+  
+          </MapView>
+  
+          <View style={style.searchBox}>
+  
+            <TextInput 
+              placeholder="Search here"
+              placeholderTextColor={colors.disabled_text}
+              autoCapitalize="none" 
+              style={{flex:1,padding:0}}
+              onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
+            />
 
-        </MapView>
 
-        <View style={style.searchBox}>
-
-          <TextInput 
-            placeholder="Search here"
-            placeholderTextColor={colors.disabled_text}
-            autoCapitalize="none" 
-            style={{flex:1,padding:0}}
-            onChangeText = {(searchSpeciality) => setSearchSpeciality(searchSpeciality)}
-          />
-          <TouchableOpacity   
-            onPress={()=>getSearchedSpecialists}>
-            <Icon name="ios-search" size={25}  color={colors.primary_dark}/>
-          </TouchableOpacity>
-       </View>
-
-      </View>
- 
-    );
-  }
+            <TouchableOpacity onPress={getSearchedSpecialists}>
+              <Icon name="ios-search" size={25}  color={colors.primary_dark}/>
+            </TouchableOpacity> 
+         </View>
+  
+        </View>
+   
+      );
+    }
+   
+  
 }
 const style = StyleSheet.create({
   map: {
