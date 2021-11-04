@@ -21,6 +21,7 @@ import calendarSp from './src/screens/specialistScreens/calendarSp';
 import projectSp from './src/screens/specialistScreens/projectSp';
 import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
+import uploadPhotos from './src/screens/specialistScreens/uploadPhotos';
 import addProfile from './src/screens/specialistScreens/addProfile';
 
 const TabCli = createBottomTabNavigator();
@@ -94,6 +95,7 @@ function ProjectsStackScreenSp() {
       <ProjectsStackSp.Screen name="Projects" component={projectSp}  />
       <ProjectsStackSp.Screen name="AddNewProject" component={addProjectSp} options={{title: 'Add New Project'}} />
       <ProjectsStackSp.Screen name="Photos" component={displayPhotosSp}   options={{title: 'Photos'}}/>
+      <ProjectsStackSp.Screen name="UploadPhotos" component={uploadPhotos}   options={{title: 'Upload Photos'}}/>
     </ProjectsStackSp.Navigator>
   );
 }
@@ -186,13 +188,13 @@ export default function App() {
   else {
     return (
       <NavigationContainer>
-       <Stack.Navigator initialRouteName = {initialRoute}>
-        <Stack.Screen name="Login" component={login} />
-        <Stack.Screen name="Register" component={signup} />
-        <Stack.Screen name="AddProfile" component={addProfile} options={{title:"Add Profile"}}/>
-        <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
-        <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
-      </Stack.Navigator>
+        <Stack.Navigator initialRouteName = {initialRoute}>
+          <Stack.Screen name="Login" component={login} />
+          <Stack.Screen name="Register" component={signup} />
+          <Stack.Screen name="AddProfile" component={addProfile} options={{title:"Add Profile"}}/>
+          <Stack.Screen name="BottomTabCli" component={bottomTabScreenCli} options={{title:""}}/>
+          <Stack.Screen name="BottomTabSp" component={bottomTabScreenSp} options={{ title:""}}/>
+        </Stack.Navigator>
       </NavigationContainer>
     );
   }

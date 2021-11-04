@@ -7,7 +7,9 @@ import {colors} from "../../constants/palette";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import BASE_API_URL from '../../services/BaseUrl';
 import axios from 'axios';
+import Loading from '../../components/loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default function addProjectSp({navigation}) {
@@ -17,38 +19,69 @@ export default function addProjectSp({navigation}) {
     const [projectName, setProjectName] = useState(null);
     const [description, setDescription] = useState(null);
     const [totalCost, setTotalCost] = useState(null);
-    //console.log(projectName)
+    const [projectId, setProjectId] = useState(null);
+    const [image, setImage] = useState(null);
+    const [str, setStr] = useState(null);
+
+    const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        quality: 1,
+        base64: true
+      });
+      if (!result.cancelled) {
+        setStr(result.base64);
+        setImage(result.uri); 
+      }
+    };
+
+    
+    useEffect(() => {
+      (async () => {
+        if (Platform.OS !== 'web') {
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+          }
+        }
+      })();
+    }, []);
+
+    const goToUploadPhotos = ()=>{
+      navigation.navigate('UploadPhotos');
+    }
+
     const addNewProject = async () => {
       try{
-        console.log( selectedCurrency)
         const responseNewProject = await  axios.post(`${BASE_API_URL}/api/add-project`,{  
           "name": projectName,
           "description" : description,
           "total_cost" : totalCost,
           "is_done" : isDone, 
-          "currency" : "USD",
+          "currency" : selectedCurrency,
+          "image" : str
         },
         {headers:{
           'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-        }}
-        );
-        console.log(responseNewProject.data);
-        navigation.navigate('Projects');
+        }});
+        navigation.navigate('projects');
       }catch(error){
         console.log(error);
-      }
-     
-     
+      }    
     }
-  
+
+   
   
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={[styles.container,{marginHorizontal:10}]}>
-      
-        <TouchableOpacity>
-          <Icon name="add-photo-alternate" size={100} color={colors.text}/>
-        </TouchableOpacity>
+       
+        <View style={{'flexDirection': 'row'}}>
+          <TouchableOpacity onPress={pickImage}>
+              <Icon name="add-photo-alternate" size={100} color={colors.text} />
+          </TouchableOpacity>
+          {/* { image && <Image source={{ uri: image }} style={styles.ProfileImg}/>} */}
+        </View>
+
         <View>
          
           <View style={[style.inputBox, {marginTop:10}]}>
