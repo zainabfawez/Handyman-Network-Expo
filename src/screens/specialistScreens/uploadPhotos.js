@@ -6,6 +6,7 @@ import {colors} from "../../constants/palette";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import BASE_API_URL from '../../services/BaseUrl';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -17,13 +18,13 @@ export default function uploadPhotos({navigation, route}) {
     const [str, setStr] = useState(null);
 
     const pickImage = async () => {
-        console.log(project_id);
+        console.log("uploD", project_id);
       let result = await ImagePicker.launchImageLibraryAsync({
         quality: 1,
         base64: true
       });
       if (!result.cancelled) {
-        setStr(result.base64);
+        setStr(result.base64); 
         setImage(result.uri); 
       }
     };
@@ -67,7 +68,7 @@ export default function uploadPhotos({navigation, route}) {
             <View style = {{  width: '100%', marginLeft: 8 }}>
                 <MyButtonDark
                     text = "save"
-                    onPressFunction =  {saveHandler}
+                    onPressFunction =  {pickImage}
                 />
             </View>
         </View>

@@ -47,6 +47,7 @@ export default function addProjectSp({navigation}) {
     }, []);
 
     const goToUploadPhotos = ()=>{
+      addNewProject();
       navigation.navigate('UploadPhotos');
     }
 
@@ -63,7 +64,7 @@ export default function addProjectSp({navigation}) {
         {headers:{
           'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
         }});
-        navigation.navigate('projects');
+        navigation.navigate('UploadPhotos', {projectId: responseNewProject.data});
       }catch(error){
         console.log(error);
       }    

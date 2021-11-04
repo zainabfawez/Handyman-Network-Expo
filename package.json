@@ -26,6 +26,8 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-blur": "^3.2.2",
+    "react-native-calendar": "^0.13.1",
+    "react-native-calendars": "^1.1268.0",
     "react-native-calender": "^1.0.1",
     "react-native-country-picker-modal": "^2.0.0",
     "react-native-elements": "^3.4.2",

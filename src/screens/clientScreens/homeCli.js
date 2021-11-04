@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert, Button} from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert, RefreshControl, ScrollView} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import MapView ,{ Callout, Marker } from 'react-native-maps';
 import { colors } from "../../constants/palette";
@@ -10,7 +10,9 @@ import Loading from '../../components/loading';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
 
 export default function homeCli({navigation}) {
 
@@ -19,10 +21,18 @@ export default function homeCli({navigation}) {
   const [searchedSpecialists, setSearchedSpecialists] = useState(null);
   const [searchSpeciality, setSearchSpeciality] = useState(null);
   const [coordinates, setCoordinates] = useState({
-    latitude : 33.848427, 
-    longitude :  35.518832,
+    latitude :  33.848427, 
+    longitude :  35.518832 ,
     latitudeDelta: 0.022, 
     longitudeDelta: 0.0421 });
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+  
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   const goToProfile = (specialist_id, speciality)=>{
     navigation.navigate('ProfileSp',{specialist_id:specialist_id, speciality:speciality})
@@ -36,10 +46,10 @@ export default function homeCli({navigation}) {
         }}
       );
       setClient(responseProfile.data);
-      setCoordinates({latitude : 33.848427, 
-                      longitude :  35.518832,
-                      latitudeDelta: 0.022, 
-                      longitudeDelta: 0.0421 })
+      // setCoordinates({latitude : responseProfile.data['latitude'], 
+      //                 longitude : responseProfile.data['longitude'],
+      //                 latitudeDelta: 0.022, 
+      //                 longitudeDelta: 0.0421 })
     }catch(error) {
           console.log(error);         
       }
@@ -96,6 +106,9 @@ export default function homeCli({navigation}) {
   }else{
       return (
         <View style={style.container}> 
+            <ScrollView
+              contentContainerStyle={style.scrollView}
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <MapView
             showsUserLocation
             style={style.map}
@@ -152,8 +165,8 @@ export default function homeCli({navigation}) {
               <Icon name="ios-search" size={25}  color={colors.primary_dark}/>
             </TouchableOpacity> 
          </View>
-  
-        </View>
+      </ScrollView>
+    </View>
    
       );
     }
@@ -167,6 +180,13 @@ const style = StyleSheet.create({
   },
   container: {
     flex : 1,
+  },
+
+  scrollView: {
+    flex: 1,
+    backgroundColor: 'pink',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   searchBox: {
