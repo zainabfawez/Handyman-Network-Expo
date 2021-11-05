@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import { Text, View, Image, TouchableOpacity, StyleSheet, ScrollView, ImageBackground} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import styles from "../../constants/styles";
@@ -9,33 +9,56 @@ import Loading from '../../components/loading';
 import axios from 'axios';
 import BASE_API_URL from '../../services/BaseUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EmptyState from '../../components/EmptyState';
 
 
 export default function projectCli({route}) {
 
   const project_id = route.params.project_id;
   const [projectDetails, setProjectDetails] = useState(false);
+  const [photos, setPhotos] = useState(null);
 
   const getProjectDetails = async () => {
-    const responseProjectDetails = await  axios.get(`${BASE_API_URL}/api/get-project-details?project_id=${project_id}`, 
+    try{
+      const responseProjectDetails = await  axios.get(`${BASE_API_URL}/api/get-project-details?project_id=${project_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    setProjectDetails(responseProjectDetails.data);  
+      }});
+      setProjectDetails(responseProjectDetails.data);
+    }catch(error){
+      console.log(error);
+    }   
+  }
+
+  const getProjectPhotos = async () => {
+    try{
+      const responseProjectphotos = await  axios.get(`${BASE_API_URL}/api/get-project-photos?project_id=${project_id}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }} );
+      if(responseProjectphotos.data.status){
+        setPhotos("empty State");
+      }else{
+        setPhotos(responseProjectphotos.data); 
+      }
+    }catch(error){
+      console.log(error);
+    } 
   }
 
   useEffect(() => {
     getProjectDetails();
+    getProjectPhotos();
   }, [])
 
-  if (!(projectDetails)){
+  if (!(projectDetails && photos)){
     return (
      <Loading/>
     );
   }else{
     return (
       <View style={styles.container}>
+        <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
         <View style={{flex:1}}>
           <Swiper
             from={1}
@@ -55,15 +78,14 @@ export default function projectCli({route}) {
               ),
             }}
           >
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-              <Image source={require( '../../../assets/profilePic.png')}/>
-            </View>
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-              <Image source={require( '../../../assets/profilePic.png')}/>  
-            </View>
-            <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-              <Image source={require( '../../../assets/profilePic.png')}/>
-            </View>
+             { photos != "empty State" && photos.map((photo, key) => {
+                return(
+                  <View style={{flex:1,alignItems:"center",justifyContent:"center"}} key={key}>
+                    <Image source={{uri:`${BASE_API_URL}${photo.photo_url}`}} style = {{height: '70%', width: '100%'}}/>
+                  </View>
+              )})}
+
+              {photos == "empty State" && <EmptyState/>}
           </Swiper>
         </View>
         
@@ -89,6 +111,7 @@ export default function projectCli({route}) {
                 </View>
               </ScrollView>
             </View>
+            </ImageBackground>
     </View>
         
 

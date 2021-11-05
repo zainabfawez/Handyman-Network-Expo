@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Button, Platform, Image } from 'react-native';
+import { StyleSheet, View, Text,ImageBackground } from 'react-native';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";
@@ -7,21 +7,34 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
+import {sendPushNotification} from '../specialistScreens/notifications';
+import * as Notifications from 'expo-notifications';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Card } from 'react-native-elements';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
-export default function calendarCli({route}) {
+export default function calendarCli({navigation,route}) {
 
   const [availableDates, setAvailableDates] = useState(null);
   const [appointmentDates, setAppointmentDates] = useState(null);
   const specialist_id = route.params.specialist_id;
 
+
+  
+
   const getAvailableDates = async () => {
     try{
       const responseAvailableDates = await  axios.get(`${BASE_API_URL}/api/get-available-dates?specialist_id=${specialist_id}`, 
       { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-      );
+        'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }});
       if (responseAvailableDates.data == "No available dates"){
         setAvailableDates("No available dates");  
       }else{
@@ -47,6 +60,7 @@ export default function calendarCli({route}) {
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }});
+      await sendPushNotification(responseAppointmentDate.data, "A new appointment has been booked", "new Appointment")
       getAppointmentDates();
     }catch(error){
       console.log(error);
@@ -58,9 +72,9 @@ export default function calendarCli({route}) {
     try{
       const responseAppointmentDates = await  axios.get(`${BASE_API_URL}/api/get-appointment-dates`, 
       { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }} 
-      );
+        'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}); 
+      
       if (responseAppointmentDates.data == "No appointments"){
         setAppointmentDates("No appointments");  
       }else{
@@ -89,41 +103,44 @@ export default function calendarCli({route}) {
   }else{
     return (
         <View style={styles.container}>
+           <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
         
-        <View style={{marginTop: 20}}>
-            <Calendar
-            theme={{
-            
-                selectedDayBackgroundColor: colors.primary_dark,
-                selectedDayTextColor: colors.primary_dark,
-                todayTextColor: colors.primary_dark,
-                dayTextColor: '#2d4150',
-                dotColor: colors.primary_dark,
-                arrowColor: colors.primary_dark,
-                monthTextColor: colors.primary_dark,
-            }}  
-
-            
-            markedDates={{...availableDates,...appointmentDates}}
-                
-            
-            style={style.Calendar}
-            minDate={Date()}
-            onDayPress={(day) => {setAppointmentDate(day)}}
-            onDayLongPress={(day) => {console.log('selected day', day)}}
-            monthFormat={'MMM yyyy'} // http://arshaw.com/xdate/#Formatting
-            disableMonthChange={true}
-            firstDay={1}    
-            showWeekNumbers={true}    
-            onPressArrowLeft={subtractMonth => subtractMonth()}
-            onPressArrowRight={addMonth => addMonth()}        
-            disableAllTouchEventsForDisabledDays={true}
-            enableSwipeMonths={true}
-            hideExtraDays={true}
-            />
-        </View>
+            <Card>
+              <Text>press on the date to book your appointment</Text>
+              <Text><Icon name="numeric-7-circle" size={25} color={colors.primary}/> available Dates</Text>
+              <Text><Icon name="numeric-7-circle" size={25} color={colors.disabled_text}/> Booked dates</Text>
+            </Card>
+      
         
-        
+          <View style={{marginTop: 20}}>
+              <Calendar
+              theme={{
+                  selectedDayBackgroundColor: colors.primary_dark,
+                  selectedDayTextColor: colors.primary_dark,
+                  todayTextColor: colors.primary_dark,
+                  dayTextColor: '#2d4150',
+                  dotColor: colors.primary_dark,
+                  arrowColor: colors.primary_dark,
+                  monthTextColor: colors.primary_dark,
+              }}  
+              markedDates={{...availableDates,...appointmentDates}}
+              style={style.Calendar}
+              minDate={Date()}
+              onDayPress={(day) => {setAppointmentDate(day)}}
+              onDayLongPress={(day) => {console.log('selected day', day)}}
+              monthFormat={'MMM yyyy'} // http://arshaw.com/xdate/#Formatting
+              disableMonthChange={true}
+              firstDay={1}    
+              showWeekNumbers={true}    
+              onPressArrowLeft={subtractMonth => subtractMonth()}
+              onPressArrowRight={addMonth => addMonth()}        
+              disableAllTouchEventsForDisabledDays={true}
+              enableSwipeMonths={true}
+              hideExtraDays={true}
+              />
+          </View>
+          
+         </ImageBackground>
         </View>
         );
     }

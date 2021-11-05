@@ -1,5 +1,5 @@
 import React, {useState, useEffect } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Alert,  Modal, TextInput, ToastAndroid } from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity, ImageBackground, Modal, TextInput, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -15,7 +15,7 @@ import Loading from '../../components/loading';
 import EmptyState from '../../components/EmptyState';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useFocusEffect } from '@react-navigation/native';
+
 
 
 export default function profileSp({navigation, route}) {
@@ -37,6 +37,11 @@ export default function profileSp({navigation, route}) {
     navigation.navigate('projectCli',{project_id:project_id})
   }
 
+  const goToCalendar = (specialist_id)=>{
+    console.log("test");
+    navigation.navigate("CalendarCli",{specialist_id:specialist_id})
+  }
+
   const triggerCall = () => {
     // Check for perfect 12 digit length
     if (phoneNumber.length > 12) {
@@ -52,34 +57,43 @@ export default function profileSp({navigation, route}) {
   };
 
   const getSpecialistInfo = async () => {
-    const responseInfo = await  axios.get(`${BASE_API_URL}/api/get-user?id=${specialist_id}`, 
+    try{
+      const responseInfo = await  axios.get(`${BASE_API_URL}/api/get-user?id=${specialist_id}`, 
       { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    setInfo(responseInfo.data);  
+        'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }});
+      setInfo(responseInfo.data);  
+    }catch(error){
+      console.log(error);
+    } 
   }
 
   const addNewRate = async () => {
-    const responseNewRate = await  axios.post(`${BASE_API_URL}/api/rate-specialist`,{  
-      "rate": newRating,
-      "specialist_id" : `${specialist_id}`,
-    },
-    {headers:{
-      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }}
-    );
+    try{
+      const responseNewRate = await  axios.post(`${BASE_API_URL}/api/rate-specialist`,{  
+        "rate": newRating,
+        "specialist_id" : `${specialist_id}`,
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }});
+    }catch(error){
+      console.log(error);
+    }
   }
 
   const addNewReview = async () => {
-    const responseNewReview = await  axios.post(`${BASE_API_URL}/api/comment-specialist`,{  
-      "comment": newReview,
-      "specialist_id" : `${specialist_id}`,
-    },
-    {headers:{
-      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }}
-    );
+    try{
+      const responseNewReview = await  axios.post(`${BASE_API_URL}/api/comment-specialist`,{  
+        "comment": newReview,
+        "specialist_id" : `${specialist_id}`,
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }});
+    }catch(error){
+      console.log(error);
+    }  
   }
 
   const saveHandler = ()=>{
@@ -89,52 +103,63 @@ export default function profileSp({navigation, route}) {
   }
 
   const getSpecialistProfile = async () => {
-    const responseProfile = await  axios.get(`${BASE_API_URL}/api/get-profile?specialist_id=${specialist_id}`, 
+    try{
+      const responseProfile = await  axios.get(`${BASE_API_URL}/api/get-profile?specialist_id=${specialist_id}`, 
       { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    setProfile(responseProfile.data);
-    setPhoneNumber(responseProfile.data[0].phone);
+        'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }});
+      setProfile(responseProfile.data);
+      setPhoneNumber(responseProfile.data[0].phone);
+    }catch(error){
+      console.log(error);
+    }
   }
 
   const getAverageRate = async () => {
-    const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${specialist_id}`, 
+    try{
+      const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${specialist_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    if (responseRating.data.status){
-      setRating("No Rating");  
-    }else{
-      setRating(JSON.stringify(responseRating.data));  
+      }});
+      if (responseRating.data.status){
+        setRating("No Rating");  
+      }else{
+        setRating(JSON.stringify(responseRating.data));  
+      }
+    }catch(error){
+      console.log(error);
     }
   }
 
   const getProjects = async () => {
-    const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-projects?specialist_id=${specialist_id}`, 
+    try{
+      const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-projects?specialist_id=${specialist_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    if (responseProjects.data.status){
-      setProjects('No Projects found');
-    }else{
-      setProjects(responseProjects.data);  
-    }
-   
+      }});
+      if (responseProjects.data.status){
+        setProjects('No Projects found');
+      }else{
+        setProjects(responseProjects.data);  
+      }
+    }catch(error){
+      console.log(error);
+    } 
   }
 
   const getComments = async () => {
-    const responseComments = await  axios.get(`${BASE_API_URL}/api/get-comments?specialist_id=${specialist_id}`, 
+    try{
+      const responseComments = await  axios.get(`${BASE_API_URL}/api/get-comments?specialist_id=${specialist_id}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    if (responseComments.data.status){
-      setComments('No Reviews yet');
-    }else{
-      setComments(responseComments.data); 
+        }});
+      if (responseComments.data.status){
+        setComments('No Reviews yet');
+      }else{
+        setComments(responseComments.data); 
+      }
+    }catch(error){
+      console.log(error);
     }
   }
 
@@ -159,11 +184,6 @@ export default function profileSp({navigation, route}) {
     </View>
   );
   
-  const goToCalendar = (specialist_id)=>{
-    navigation.navigate('CalendarCli',{specialist_id:specialist_id})
-  }
-
-
   useEffect(() => {
     getSpecialistProfile();
     getSpecialistInfo();
@@ -180,6 +200,7 @@ export default function profileSp({navigation, route}) {
     }else{    
       return (
         <View style={styles.container}>
+          <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
           <View >
             <View style={{flexDirection: 'row'}}>
               <Image
@@ -220,8 +241,10 @@ export default function profileSp({navigation, route}) {
               </TouchableOpacity>
               <View style={styles.VerticleLine}></View>
               
-              <TouchableOpacity  onPress = {goToCalendar(specialist_id)}>
-                    <Icon name="calendar" color={colors.primary} size={30}  />
+              <TouchableOpacity onPress={goToCalendar}>
+                <View>
+                  <Icon name="calendar" color={colors.primary} size={30} />
+                </View>
               </TouchableOpacity>
             </View>
           </View>
@@ -319,8 +342,7 @@ export default function profileSp({navigation, route}) {
                 </View>
             </Modal>
         </View>
-
-          
+          </ImageBackground>
         </View>
       );
   }

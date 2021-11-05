@@ -37,93 +37,74 @@ export default function addProfile({navigation}) {
         setProfilePic(pickedImage.uri); 
       }
     };
-
-    
-  // const uploadProfiePhoto = async () => {
-  //   try {
-  //     const responsePhoto = await  axios.post(`${BASE_API_URL}/api/user/add-profile-pic`, {
-  //         "image" : imageCode
-  //       },
-  //       {headers:{
-  //         'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
-  //         }}
-  //     );
-  //     await AsyncStorage.setItem('profilePic', responsePhoto.data['profile_picture_url']);
-  //   } catch(error) {
-  //     console.log(error); 
-  //   }
-  // }
-    
-   
-  const getAllCategories = async () => {
-    try{
-      const responseCategories = await  axios.get(`${BASE_API_URL}/api/get-all-specialities`, 
-      { headers:{
-      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }} );
-      setCategories(responseCategories.data); 
-    }catch(error){
-      console.log(error);
-    } 
-  }
-    
-  const addNewProfile = async () => {
-    console.log(country.name)
-    try{
-      const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-profile`,{  
-        "phone" : phone,
-        "experience" : experience,
-        "currency" : currency,
-        "price" : price,
-        "nationality" : country.name,
-        "image" : imageCode,
-      },
-      {headers:{
-        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-      }}
-      );
-    }catch(error){
-      console.log(error);
+     
+    const getAllCategories = async () => {
+      try{
+        const responseCategories = await  axios.get(`${BASE_API_URL}/api/get-all-specialities`, 
+        { headers:{
+        'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+        }});
+        setCategories(responseCategories.data); 
+      }catch(error){
+        console.log(error);
+      } 
     }
-  
-  }
-
-  const addNewCategory = async () => {
-    try{
-      const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-speciality`,{  
-        "speciality" : category,
-      },
-      {headers:{
-        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-      }}
-      );
-    }catch(error){
-      console.log(error);
-    }
-  
-  }
-
-  const saveHandler = ()=>{
-    addNewCategory();
-    addNewProfile();
-    navigation.navigate('BottomTabSp')
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'BottomTabSp' }],
-      });
-  }
-
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
+      
+    const addNewProfile = async () => {
+      console.log(country.name)
+      try{
+        const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-profile`,{  
+          "phone" : phone,
+          "experience" : experience,
+          "currency" : currency,
+          "price" : price,
+          "nationality" : country.name,
+          "image" : imageCode,
+        },
+        {headers:{
+          'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+        }});
+      }catch(error){
+        console.log(error);
       }
-    })();
-    getAllCategories();
-  }, []);
+    
+    }
+
+    const addNewCategory = async () => {
+      try{
+        const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-speciality`,{  
+          "speciality" : category,
+        },
+        {headers:{
+          'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+        }});
+      }catch(error){
+        console.log(error);
+      }
+    
+    }
+
+    const saveHandler = ()=>{
+      addNewCategory();
+      addNewProfile();
+      navigation.navigate('BottomTabSp')
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'BottomTabSp' }],
+        });
+    }
+
+    useEffect(() => {
+      (async () => {
+        if (Platform.OS !== 'web') {
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (status !== 'granted') {
+            alert('Sorry, we need camera roll permissions to make this work!');
+          }
+        }
+      })();
+      getAllCategories();
+    }, []);
 
   if (!categories){
     return(<Loading/>);

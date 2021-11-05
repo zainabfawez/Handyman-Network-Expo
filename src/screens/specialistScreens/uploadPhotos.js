@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, TouchableOpacity, StyleSheet,  ToastAndroid } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import MyButtonDark from '../../components/MyButtonDark';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";
@@ -13,7 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function uploadPhotos({navigation, route}) {
 
     const project_id = route.params.projectId;
-    const [image, setImage] = useState(null);
     const [str, setStr] = useState(null);
 
     const pickImage = async () => {
@@ -32,11 +31,10 @@ export default function uploadPhotos({navigation, route}) {
         const responsePhoto = await  axios.post(`${BASE_API_URL}/api/add-project-photo`, {
             "image" :str,
             "project_id" : project_id
-          },
-          {headers:{
-            'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
-            }}
-        );
+        },
+        {headers:{
+          'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
+        }});
       } catch(err) {
         console.log(err); 
       }
@@ -70,7 +68,7 @@ export default function uploadPhotos({navigation, route}) {
               
             </View>
            
-            <View style = {{  width: '100%', marginLeft: 8 }}>
+            <View style = {{ width: '100%', marginLeft: 8 }}>
                 <MyButtonDark
                     text = "save"
                     onPressFunction =  {saveHandler}

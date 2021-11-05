@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { Text, View, Image, ScrollView, Modal, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, Image, ScrollView, Modal, StyleSheet, TouchableOpacity, TextInput, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyButtonDark from '../../components/MyButtonDark';
 import MyButtonGray from '../../components/MyButtonGray';
@@ -12,8 +12,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
 import {sendPushNotification} from './notifications';
-import EmptyState from '../../components/EmptyState';
-
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -29,7 +27,6 @@ export default function projectSp({navigation}) {
   const [modalTipVisible, setModalTipVisible] = useState(false);
   const [fullName, setFullName] = useState(null);
   const [speciality, setSpeciality] = useState(null);
-  const [id, setId] = useState(null);
   const [rating, setRating] = useState(null);
   const [pushTokens, setPushTokens] = useState(null);
   const [newTip, setNewTip] = useState(null);
@@ -48,13 +45,16 @@ export default function projectSp({navigation}) {
   }
 
   const getSpeciality = async () => {
-    const responseSpeciality = await  axios.get(`${BASE_API_URL}/api/get-specialist-specialities?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+    try{
+      const responseSpeciality = await  axios.get(`${BASE_API_URL}/api/get-specialist-specialities?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
-    );
-    
-    setSpeciality(responseSpeciality.data);  
+      );
+      setSpeciality(responseSpeciality.data);
+    }catch(error){
+      console.log(error);
+    }    
   }
 
   const getPhoto = async () => {
@@ -67,31 +67,37 @@ export default function projectSp({navigation}) {
 
   
   const getProfilePic = async () => {
-    const  responseImageSource = await  axios.get(`${BASE_API_URL}/api/get-profile-pic?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+    try{
+      const  responseImageSource = await  axios.get(`${BASE_API_URL}/api/get-profile-pic?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }} 
-    );
-    console.log(responseImageSource.data.profile_picture_url)
-    if (responseImageSource.data.profile_picture_url == "nothing"){
-      setImageSource('../../../assets/profilePic.png')
-    }else{
-      setImageSource(responseImageSource.data.profile_picture_url);  
-    }
+      }});
+      if (responseImageSource.data.profile_picture_url == "nothing"){
+        setImageSource('../../../assets/profilePic.png')
+      }else{
+        setImageSource(responseImageSource.data.profile_picture_url);  
+      }
+    }catch(error){
+      console.log(error);
+    } 
   }
 
 
   const addNewTip = async () => {
-    const responseTip = await  axios.post(`${BASE_API_URL}/api/add-tip`,{  
-      "tip" : newTip
-    },
-    {headers:{
-      'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-    }});
-    {pushTokens.map(async(pushToken) =>  {
-        await sendPushNotification(pushToken.expoPushNotificationToken, "A new Tip has been added", "newTip")
-    })}
-      setModalTipVisible(false)
+    try{
+      const responseTip = await  axios.post(`${BASE_API_URL}/api/add-tip`,{  
+        "tip" : newTip
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }});
+      {pushTokens.map(async(pushToken) =>  {
+          await sendPushNotification(pushToken.expoPushNotificationToken, "A new Tip has been added", "newTip")
+      })}
+        setModalTipVisible(false)
+    }catch(error){
+      console.log(error);
+    } 
   }
 
   const getProjects = async () => {
@@ -99,25 +105,23 @@ export default function projectSp({navigation}) {
       const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-specialist-projects?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-        );
-        if (responseProjects.data.status){
-          setProjects('No Projects found');
-        }else{
-          setProjects(responseProjects.data);  
-        }
-      }catch(error){
-        console.log(error);
+      }});
+      if (responseProjects.data.status){
+        setProjects('No Projects found');
+      }else{
+        setProjects(responseProjects.data);  
       }
+    }catch(error){
+      console.log(error);
     }
+  }
    
   const getPushTokens = async () => {
     try{
       const responsePushTokens = await  axios.get(`${BASE_API_URL}/api/get-push-tokens`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }} 
-      );
+      }});
       setPushTokens(responsePushTokens.data); 
     }catch(error){
       console.log(error);
@@ -125,37 +129,26 @@ export default function projectSp({navigation}) {
   }
 
   const getAverageRate = async () => {
-    const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+    try{
+      const responseRating = await  axios.get(`${BASE_API_URL}/api/get-average-rate?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
-      }}
-    );
-    if (responseRating.data.status){
-      setRating("No Rating");  
-    }else{
-      setRating(responseRating.data);  
-    }
+      }});
+      if (responseRating.data.status){
+        setRating("No Rating");  
+      }else{
+        setRating(responseRating.data);  
+      }
+    }catch(error){
+      console.log(error);
+    }  
   }
 
   const goToPhotos = (project_id)=>{
     navigation.navigate('Photos',{project_id:project_id})
   }
 
-  const renderProjects = ()=>{
-    return(
-    projects.map((project, key) => {
-      return(
-        <DisplayProjects 
-          key={key}
-          name = {project.name} 
-          description = {project.description} 
-          onPressFunction = {() =>{ goToPhotos(project.id) }}
-          />
-      )}));
-  }
-
   useEffect(() => {
-    //getProfilePic();
     getName();
     getSpeciality();
     getAverageRate();
@@ -172,6 +165,7 @@ export default function projectSp({navigation}) {
   }else{
     return (
       <ScrollView style={styles.container}>
+         <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
       <View >
         <View style={{flexDirection: 'row'}}>
           <Image
@@ -192,7 +186,7 @@ export default function projectSp({navigation}) {
           <View  style={style.proj}>
             <Text style={style.projText}>Projects</Text>
           </View>
-          {/* {projects=="No Projects found"? <EmptyState/> :  renderProjects }*/}
+        
          
             {projects.map((project, key) => {
               return(
@@ -268,6 +262,7 @@ export default function projectSp({navigation}) {
         </View>
      
       </View>
+      </ImageBackground>
       </ScrollView>
     );
   }
@@ -290,9 +285,6 @@ const style = StyleSheet.create({
     backgroundColor: 'rgba(252,252,252,0.8)',
 
   },
-
-  
- 
 
   modalView: {
     width: '90%',

@@ -48,6 +48,13 @@ export default StyleSheet.create({
         fontSize : 20,
         color : colors.black, 
         marginLeft : 12,
-      }
+      },
+    
+    backImage: {
+    flex: 1,
+    justifyContent: 'center',
+    },
+    
+
     
 });

@@ -23,6 +23,8 @@ export default function login({ navigation }) {
         "password":password
       });
       await AsyncStorage.setItem('token', response.data['access_token']);
+      await AsyncStorage.setItem('firstName', response.data['user']['first_name']);
+      await AsyncStorage.setItem('lastName', response.data['user']['last_name']);
       await AsyncStorage.setItem('user_id', JSON.stringify(response.data['user']['id']));
       await AsyncStorage.setItem('fullName', response.data['user']['first_name'] + ' ' + response.data['user']['last_name']);
       if(response.data['user']['is_specialist']){

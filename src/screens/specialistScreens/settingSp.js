@@ -1,17 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, ToastAndroid, Image, TouchableOpacity } from 'react-native';
+import { Text, View, ToastAndroid, Image, TouchableOpacity, TextInput, StyleSheet, ImageBackground } from 'react-native';
 import styles from "../../constants/styles";
-import MyButton from "../../components/MyButton";
+import MyButtonDark from "../../components/MyButtonDark";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import BASE_API_URL from '../../services/BaseUrl';
 import * as ImagePicker from 'expo-image-picker';
 import {colors} from "../../constants/palette";
+import Loading from '../../components/loading';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function settingSp({navigation}) {
 
-  const [image, setImage] = useState(null);
   const [str, setStr] = useState(null);
+  const [imageSource, setImageSource] = useState(null);
+  const [info, setInfo] = useState(null);
+  const [firstName, setFirstName] = useState(null);
+  const [lastName, setLastName] = useState(null);
+  const [email, setEmail] = useState(null);
+  
+
+  const getProfilePic = async () => {
+    try{
+      const  responseImageSource = await  axios.get(`${BASE_API_URL}/api/get-profile-pic?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }}); 
+      if (responseImageSource.data.profile_picture_url == "nothing"){
+        setImageSource('../../../assets/profilePic.png')
+      }else{
+        setImageSource(responseImageSource.data.profile_picture_url);  
+      }
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -31,12 +55,41 @@ export default function settingSp({navigation}) {
         },
         {headers:{
           'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
-          }}
-      );
+        }});
+      getProfilePic();
       await AsyncStorage.setItem('profilePic', responsePhoto.data);
-    } catch(err) {
-      console.log(err); 
+    } catch(error) {
+      console.log(error); 
     }
+  }
+
+
+  const getUser = async () => {
+    try{
+      const responseInfo = await  axios.get(`${BASE_API_URL}/api/user-profile`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }});
+      setInfo(responseInfo.data); 
+    }catch(error){
+      console.log(error);
+    } 
+  }
+
+  const editChanges = async () => {
+    try{
+      const responseSearch = await  axios.post(`${BASE_API_URL}/api/edit-info`,  
+      {
+        "first_name" : firstName,
+        "last_name" : lastName,
+        "email" : email,
+      },
+      {headers:{
+        'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
+      }});
+    }catch(error){
+      console.log(error);
+    } 
   }
   
   useEffect(() => {
@@ -48,6 +101,8 @@ export default function settingSp({navigation}) {
         }
       }
     })();
+    getProfilePic();
+    getUser();
   }, []);
 
   const logout = async() => {
@@ -60,26 +115,108 @@ export default function settingSp({navigation}) {
       });
   }
 
+  if(!(imageSource && info)){
+    return(<Loading/>);
+  }else{
+
     return (
       <View style={styles.container}>
-
-        <Text>setting Sp screen</Text>
-
-        <View style ={[styles.row, {justifyContent: "space-between"}]}>
-            <Text style={{fontSize: 15}}> Add Profile Picture</Text>
-            <TouchableOpacity onPress={pickImage}>
-             <Text>choose pic</Text>
-            </TouchableOpacity>
-            <TouchableOpacity  onPress = {uploadPhoto} >
-              <Text style={{color : colors.green}}>Upload Image</Text>
+        <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={style.image}>
+        <View style={{flexDirection:'row'}}>
+          <Image
+              style={[styles.ProfileImg,{marginRight:1}]} 
+              source={{uri: `${BASE_API_URL}${imageSource}`}}
+          />
+          <Icon 
+            name="image-edit-outline" 
+            size={25} color={colors.link} 
+            style={{marginTop: 110}} 
+            onPress = {pickImage}
+          />
+          <View style={{margin:60}}>
+            <TouchableOpacity onPress={uploadPhoto}>
+              <AntDesign name="upload" size={30} />
             </TouchableOpacity>
           </View>
-          { image && <Image source={{ uri: image }} style={styles.ProfileImg}/>}
+        </View>
 
-        <MyButton
-          text="logout"
-          onPressFunction={() => logout()}
+        <View style={style.inputBox}>
+            <Text style={style.inputLabel}>First Name</Text>
+            <TextInput
+              value = {info.first_name}
+              style={style.input}
+              placeholder={info.first_name}
+              placeholderTextColor= {colors.text}
+              onChangeText={(firstName) => setFirstName(firstName)}
+            />
+        </View>
+        <View style={styles.HorizontalLine}></View>
+
+        <View style={style.inputBox}>
+            <Text style={style.inputLabel}>Last Name</Text>
+            <TextInput
+              value = {info.last_name}
+              style={style.input}
+              placeholder={info.last_name}
+              placeholderTextColor= {colors.text}
+              onChangeText={(lastName) => setLastName(lastName)}
+            />
+        </View>
+        <View style={styles.HorizontalLine}></View>
+
+        <View style={style.inputBox}>
+            <Text style={style.inputLabel}>E-mail</Text>
+            <TextInput
+              value = {info.email}
+              style={style.input}
+              keyboardType='email-address'
+              textContentType='emailAddress'
+              placeholder={info.email}
+              placeholderTextColor= {colors.text}
+              onChangeText={(email) => setEmail(email)}
+            />
+        </View>
+        <View style={styles.HorizontalLine}></View>
+
+        <MyButtonDark 
+          text =" Edit Changes"
+          onPressFunction = {editChanges}
         />
+         
+       
+          <TouchableOpacity onPress = {logout}>
+            <View style={{flexDirection: 'row', marginTop:120}}>
+              <Icon name="logout" size={40} color={colors.primary_dark}  />
+              <Text style={{fontSize: 15, fontWeight: 'bold', color: colors.primary_dark, marginTop:8}}>LOGOUT</Text>
+            </View>
+          </TouchableOpacity>
+      
+          </ImageBackground>
         </View>
     );
   }
+}
+
+const style = StyleSheet.create({
+
+  inputBox: {
+    marginTop: 10,
+  },
+  inputLabel: {
+    fontSize: 18,
+    marginBottom: 6,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    backgroundColor: '#dfe4ea',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+  },
+  image: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+});
+
