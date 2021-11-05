@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView, Keyboard, Image } from 'react-native';
 import styles from "../../constants/styles";
 import MyButton from '../../components/MyButton';
 import CountryPicker from 'react-native-country-picker-modal';
@@ -11,6 +11,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import * as ImagePicker from 'expo-image-picker';
+import Loading from '../../components/loading';
 
 
 export default function addProfile({navigation}) {
@@ -24,6 +25,7 @@ export default function addProfile({navigation}) {
     const [profilePic, setProfilePic] = useState(null);
     const [imageCode, setImageCode] = useState(null);
     const [allcategories, setAllCategories] = useState(null);
+    const [categories, setCategories] = useState(null);
 
     const pickImage = async () => {
       let pickedImage = await ImagePicker.launchImageLibraryAsync({
@@ -37,24 +39,33 @@ export default function addProfile({navigation}) {
     };
 
     
-  const uploadProfiePhoto = async () => {
-    try {
-      const responsePhoto = await  axios.post(`${BASE_API_URL}/api/user/add-profile-pic`, {
-          "image" : imageCode
-        },
-        {headers:{
-          'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
-          }}
-      );
-      await AsyncStorage.setItem('profilePic', responsePhoto.data['profile_picture_url']);
-    } catch(error) {
-      console.log(error); 
-    }
-  }
+  // const uploadProfiePhoto = async () => {
+  //   try {
+  //     const responsePhoto = await  axios.post(`${BASE_API_URL}/api/user/add-profile-pic`, {
+  //         "image" : imageCode
+  //       },
+  //       {headers:{
+  //         'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
+  //         }}
+  //     );
+  //     await AsyncStorage.setItem('profilePic', responsePhoto.data['profile_picture_url']);
+  //   } catch(error) {
+  //     console.log(error); 
+  //   }
+  // }
     
    
-    //api to get all categories for thedrop dow list
-
+  const getAllCategories = async () => {
+    try{
+      const responseCategories = await  axios.get(`${BASE_API_URL}/api/get-all-specialities`, 
+      { headers:{
+      'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
+      }} );
+      setCategories(responseCategories.data); 
+    }catch(error){
+      console.log(error);
+    } 
+  }
     
   const addNewProfile = async () => {
     console.log(country.name)
@@ -64,7 +75,8 @@ export default function addProfile({navigation}) {
         "experience" : experience,
         "currency" : currency,
         "price" : price,
-        "nationality" : country.name
+        "nationality" : country.name,
+        "image" : imageCode,
       },
       {headers:{
         'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
@@ -78,7 +90,6 @@ export default function addProfile({navigation}) {
 
   const addNewCategory = async () => {
     try{
-     
       const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-speciality`,{  
         "speciality" : category,
       },
@@ -111,9 +122,12 @@ export default function addProfile({navigation}) {
         }
       }
     })();
+    getAllCategories();
   }, []);
 
-
+  if (!categories){
+    return(<Loading/>);
+  }else{
     return (
       <View style={styles.container}>
 
@@ -123,21 +137,19 @@ export default function addProfile({navigation}) {
             <Text style = {style.textSubTitle}>Please Fill These Profile Informations</Text>
             <View style= {styles.HorizontalLine}></View>
           </View>
-
+          
           <View style= {styles.HorizontalLine}></View>
 
           <View style ={[styles.row, {justifyContent: "space-between"}]}>
-            <Text style={{fontSize: 15}}> Add Profile Picture</Text>
+            <Text style={{marginLeft:10, fontSize: 15}}>Profile Picture:</Text>
             <TouchableOpacity onPress={pickImage}>
-              <Icon name="add-photo-alternate" size={70} color={colors.text}/>
+              <Icon name="add-photo-alternate" size={50} color={colors.text}/>
             </TouchableOpacity>
-            <TouchableOpacity  onPress = {uploadProfiePhoto} >
-              <Text style={{color : colors.green}}>Upload Image</Text>
-            </TouchableOpacity>
+            {profilePic && <Image source={{ uri: profilePic }} style={styles.ProfileImg}/>}
           
           </View>
           
-          <Text style={ {marginLeft:10, fontSize: 15}}>Nationality:</Text>
+          <Text style={{marginLeft:10, fontSize: 15}}>Nationality:</Text>
           <TouchableOpacity>
             <View style={style.box} >
             
@@ -167,9 +179,10 @@ export default function addProfile({navigation}) {
                 onValueChange={(itemValue, itemIndex) =>
                   setCategory(itemValue)}
               >
-                <Picker.Item label="Carpenter" value="Carpenter" />
-                <Picker.Item label="Electrician" value="electrician" />
-                <Picker.Item label="Plumber" value="plumber" />
+                 { categories && categories.map((category, key) => {
+                   return(
+                    <Picker.Item label={category.name} value={category.name} key={key} />
+                  )})}
             </Picker>
           </View>
 
@@ -232,6 +245,7 @@ export default function addProfile({navigation}) {
       </View>
     );
   }
+}
 
 const style = StyleSheet.create({
   title: {

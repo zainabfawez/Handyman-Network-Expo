@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, TextInput, Alert, RefreshControl, ScrollView} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { Text, View, StyleSheet, Dimensions, TextInput, Alert, RefreshControl, ScrollView} from 'react-native';
 import MapView ,{ Callout, Marker } from 'react-native-maps';
 import { colors } from "../../constants/palette";
 import axios from 'axios';
@@ -29,7 +28,6 @@ export default function homeCli({navigation}) {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
-  
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
@@ -46,10 +44,6 @@ export default function homeCli({navigation}) {
         }}
       );
       setClient(responseProfile.data);
-      // setCoordinates({latitude : responseProfile.data['latitude'], 
-      //                 longitude : responseProfile.data['longitude'],
-      //                 latitudeDelta: 0.022, 
-      //                 longitudeDelta: 0.0421 })
     }catch(error) {
           console.log(error);         
       }
@@ -65,12 +59,10 @@ export default function homeCli({navigation}) {
       setSpecialists(responseSpecialists.data);  
     }catch(error){
       console.log(error);
-    }
-    
+    }  
   }
   
   const getSearchedSpecialists = async () => {
-    console.log("hi");
     try{
       const responseSearch = await  axios.post(`${BASE_API_URL}/api/search-speciality`,  
       {
@@ -78,19 +70,16 @@ export default function homeCli({navigation}) {
       },
       {headers:{
         'Authorization' : `Bearer ${ await AsyncStorage.getItem('token')}`
-      }}
-      );
+      }});
       if (responseSearch.data.status){
         Alert.alert('No Search Results');
       }else{
         setSearchedSpecialists(responseSearch.data); 
         setSpecialists(null);
-        console.log(responseSearch.data);
       }
     }catch(error){
       console.log(error);
-    }
-  
+    } 
   }
   
   useEffect(() => {
@@ -117,18 +106,18 @@ export default function homeCli({navigation}) {
               {specialists && !searchedSpecialists && specialists.map((specialist, key) => {
                 return(
                   <Marker 
-                  key={key}
-                  coordinate={{
-                    latitude: parseFloat(specialist.latitude),  
-                    longitude: parseFloat(specialist.longitude),     
-                  }}> 
-                    <Callout onPress = {() => {goToProfile(specialist.id, specialist.speciality)}}>
-                      <View>
-                        <Text style={{fontWeight:'bold'}}>{specialist.first_name} {specialist.last_name}</Text>
-                        <Text>{specialist.speciality}</Text>
-                      </View>
-                    </Callout>
-                </Marker>
+                    key={key}
+                    coordinate={{
+                      latitude: parseFloat(specialist.latitude),  
+                      longitude: parseFloat(specialist.longitude),     
+                    }}> 
+                      <Callout onPress = {() => {goToProfile(specialist.id, specialist.speciality)}}>
+                        <View>
+                          <Text style={{fontWeight:'bold'}}>{specialist.first_name} {specialist.last_name}</Text>
+                          <Text>{specialist.speciality}</Text>
+                        </View>
+                      </Callout>
+                  </Marker>
               )})}
 
             {!specialists && searchedSpecialists && searchedSpecialists.map((specialist, key) => {

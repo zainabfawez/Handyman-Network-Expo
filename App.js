@@ -23,6 +23,7 @@ import displayPhotosSp from './src/screens/specialistScreens/displayPhotosSp';
 import addProjectSp from './src/screens/specialistScreens/addProjectSp';
 import uploadPhotos from './src/screens/specialistScreens/uploadPhotos';
 import addProfile from './src/screens/specialistScreens/addProfile';
+import calendarCli from './src/screens/clientScreens/calendarCli';
 
 const TabCli = createBottomTabNavigator();
 const TabSp = createBottomTabNavigator();
@@ -35,6 +36,7 @@ function HomeStackScreenCli() {
       <HomeStackCli.Screen name="HomeCli" component={homeCli} options={{ headerShown: false,}} />
       <HomeStackCli.Screen name="ProfileSp" component={profileSp} options={{title: 'Profile'}} />
       <HomeStackCli.Screen name="projectCli" component={projectCli} options={{title: 'Project'}} />
+      <HomeStackCli.Screen name="CalendarCli" component={calendarCli} options={{title: 'Book your Appointments'}} />
     </HomeStackCli.Navigator>
   );
 }

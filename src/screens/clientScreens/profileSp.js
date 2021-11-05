@@ -37,10 +37,9 @@ export default function profileSp({navigation, route}) {
     navigation.navigate('projectCli',{project_id:project_id})
   }
 
-
   const triggerCall = () => {
     // Check for perfect 12 digit length
-    if (phoneNumber.length != 12) {
+    if (phoneNumber.length > 12) {
       alert('The number is incorrect');
       return;
     }
@@ -160,6 +159,10 @@ export default function profileSp({navigation, route}) {
     </View>
   );
   
+  const goToCalendar = (specialist_id)=>{
+    navigation.navigate('CalendarCli',{specialist_id:specialist_id})
+  }
+
 
   useEffect(() => {
     getSpecialistProfile();
@@ -183,7 +186,7 @@ export default function profileSp({navigation, route}) {
                   style={styles.ProfileImg} 
                   source={{uri:`${BASE_API_URL}${profile[0].profile_picture_url}`}}
               />
-                  {/* Full name and Speciality and Info*/}
+              {/* Full name and Speciality and Info*/}
               <View style={{marginLeft: 15}}>
                 <View style={style.nameContainer}>
                     <Text style={styles.FullName}>{info.first_name} {info.last_name}</Text> 
@@ -216,10 +219,9 @@ export default function profileSp({navigation, route}) {
                   </View>
               </TouchableOpacity>
               <View style={styles.VerticleLine}></View>
-              <TouchableOpacity>
-                  <View >
-                    <Icon name="calendar" color={colors.primary} size={30} />
-                  </View>
+              
+              <TouchableOpacity  onPress = {goToCalendar(specialist_id)}>
+                    <Icon name="calendar" color={colors.primary} size={30}  />
               </TouchableOpacity>
             </View>
           </View>

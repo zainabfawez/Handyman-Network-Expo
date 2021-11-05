@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Loading from '../../components/loading';
 import {sendPushNotification} from './notifications';
-import { useFocusEffect } from '@react-navigation/native';
+import EmptyState from '../../components/EmptyState';
 
 
 Notifications.setNotificationHandler({
@@ -57,6 +57,14 @@ export default function projectSp({navigation}) {
     setSpeciality(responseSpeciality.data);  
   }
 
+  const getPhoto = async () => {
+    try {
+      setImageSource( await AsyncStorage.getItem('profilePic'));
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   
   const getProfilePic = async () => {
     const  responseImageSource = await  axios.get(`${BASE_API_URL}/api/get-profile-pic?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
@@ -64,10 +72,11 @@ export default function projectSp({navigation}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
     );
-    if (responseImageSource.data == 'null' || responseImageSource.data == "nothing"){
+    console.log(responseImageSource.data.profile_picture_url)
+    if (responseImageSource.data.profile_picture_url == "nothing"){
       setImageSource('../../../assets/profilePic.png')
     }else{
-      setImageSource(responseImageSource.data);  
+      setImageSource(responseImageSource.data.profile_picture_url);  
     }
   }
 
@@ -86,26 +95,33 @@ export default function projectSp({navigation}) {
   }
 
   const getProjects = async () => {
-    const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-specialist-projects?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
+    try{
+      const responseProjects = await  axios.get(`${BASE_API_URL}/api/get-specialist-projects?specialist_id=${ await AsyncStorage.getItem('user_id')}`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
-    );
-    if (responseProjects.data.status){
-      setProjects('No Projects found');
-    }else{
-      setProjects(responseProjects.data);  
+        );
+        if (responseProjects.data.status){
+          setProjects('No Projects found');
+        }else{
+          setProjects(responseProjects.data);  
+        }
+      }catch(error){
+        console.log(error);
+      }
     }
    
-  }
-
   const getPushTokens = async () => {
-    const responsePushTokens = await  axios.get(`${BASE_API_URL}/api/get-push-tokens`, 
+    try{
+      const responsePushTokens = await  axios.get(`${BASE_API_URL}/api/get-push-tokens`, 
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }} 
-    );
-    setPushTokens(responsePushTokens.data);  
+      );
+      setPushTokens(responsePushTokens.data); 
+    }catch(error){
+      console.log(error);
+    } 
   }
 
   const getAverageRate = async () => {
@@ -114,7 +130,7 @@ export default function projectSp({navigation}) {
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}
     );
-    if (responseRating.data == "no rates yet"){
+    if (responseRating.data.status){
       setRating("No Rating");  
     }else{
       setRating(responseRating.data);  
@@ -125,13 +141,28 @@ export default function projectSp({navigation}) {
     navigation.navigate('Photos',{project_id:project_id})
   }
 
+  const renderProjects = ()=>{
+    return(
+    projects.map((project, key) => {
+      return(
+        <DisplayProjects 
+          key={key}
+          name = {project.name} 
+          description = {project.description} 
+          onPressFunction = {() =>{ goToPhotos(project.id) }}
+          />
+      )}));
+  }
+
   useEffect(() => {
+    //getProfilePic();
     getName();
     getSpeciality();
     getAverageRate();
     getPushTokens();
     getProjects();
     getProfilePic();
+    getPhoto();
   }, []);
 
   if (!(fullName && speciality && rating && pushTokens && projects && imageSource)){
@@ -145,7 +176,7 @@ export default function projectSp({navigation}) {
         <View style={{flexDirection: 'row'}}>
           <Image
             style={styles.ProfileImg} 
-            source={{ uri: `${BASE_API_URL}${imageSource.profile_picture_url}` }}
+            source={{uri: `${BASE_API_URL}${imageSource}`}}
           />
           <View >
             <Text style={styles.FullName}>  {fullName} </Text> 
@@ -157,22 +188,21 @@ export default function projectSp({navigation}) {
           </View>
         </View>
         <View style={{marginTop: 20}}>
-
-        <View  style={style.proj}>
-          <Text style={style.projText}>Projects</Text>
-        </View>
+       
+          <View  style={style.proj}>
+            <Text style={style.projText}>Projects</Text>
+          </View>
+          {/* {projects=="No Projects found"? <EmptyState/> :  renderProjects }*/}
          
-         
-          {projects.map((project, key) => {
-            return(
-              <DisplayProjects 
-                key={key}
-                name = {project.name} 
-                description = {project.description} 
-                onPressFunction = {() =>{ goToPhotos(project.id) }}
+            {projects.map((project, key) => {
+              return(
+                <DisplayProjects 
+                  key={key}
+                  name = {project.name} 
+                  description = {project.description} 
+                  onPressFunction = {() =>{ goToPhotos(project.id) }}
                 />
-            )})}
-         
+              )})}     
         </View>
 
         {/* Modal to add a tip */}
@@ -220,7 +250,7 @@ export default function projectSp({navigation}) {
             </Modal>
         </View>
 
-        <View style={{flexDirection: "row", justifyContent : "space-around", }}>
+        <View style={{flexDirection: "row", justifyContent : "space-around" }}>
           <View style={{"flex":0.5, margin :15}}>
             <MyButtonDark
                 text = "new Project"
@@ -232,7 +262,7 @@ export default function projectSp({navigation}) {
               text = "new Tip"
               onPressFunction = {() => setModalTipVisible(true)}
             />
-          </View>
+        </View>
          
           
         </View>

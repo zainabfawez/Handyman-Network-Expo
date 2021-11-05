@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, TouchableOpacity, StyleSheet, TextInput, ScrollView, FlatList } from 'react-native';
+import { Text, View, Image, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import styles from "../../constants/styles";
-import { colors, shadows } from '../../constants/palette';
+import { colors } from '../../constants/palette';
 import Swiper from "react-native-web-swiper";
 import Loading from '../../components/loading';
 import axios from 'axios';

@@ -10,7 +10,6 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-
 export default function uploadPhotos({navigation, route}) {
 
     const project_id = route.params.projectId;
@@ -18,7 +17,6 @@ export default function uploadPhotos({navigation, route}) {
     const [str, setStr] = useState(null);
 
     const pickImage = async () => {
-        console.log("uploD", project_id);
       let result = await ImagePicker.launchImageLibraryAsync({
         quality: 1,
         base64: true
@@ -39,7 +37,6 @@ export default function uploadPhotos({navigation, route}) {
             'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
             }}
         );
-        await AsyncStorage.setItem('profilePic', responsePhoto.data);
       } catch(err) {
         console.log(err); 
       }
@@ -56,19 +53,27 @@ export default function uploadPhotos({navigation, route}) {
       })();
     }, []);
 
-    const saveHandler = ()=>{
-        navigation.navigate('Projects');
+    const saveHandler = ()=>{        
+      navigation.navigate('Projects');
     }
    
-
     return(
         <View style={styles.container}>
             
+            <View style={{'flexDirection': 'row'}}>
+              <TouchableOpacity onPress={pickImage}>
+                  <Icon name="add-photo-alternate" size={100} color={colors.text} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={uploadPhoto}>
+                  <Icon name="file-upload" size={100} color={colors.black} />
+              </TouchableOpacity>
+              
+            </View>
            
             <View style = {{  width: '100%', marginLeft: 8 }}>
                 <MyButtonDark
                     text = "save"
-                    onPressFunction =  {pickImage}
+                    onPressFunction =  {saveHandler}
                 />
             </View>
         </View>
