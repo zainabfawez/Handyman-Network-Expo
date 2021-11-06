@@ -78,7 +78,7 @@ export default function settingSp({navigation}) {
 
   const editChanges = async () => {
     try{
-      const responseSearch = await  axios.post(`${BASE_API_URL}/api/edit-info`,  
+      const responseEdit = await  axios.post(`${BASE_API_URL}/api/edit-info`,  
       {
         "first_name" : firstName,
         "last_name" : lastName,

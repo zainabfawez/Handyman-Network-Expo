@@ -201,97 +201,96 @@ export default function profileSp({navigation, route}) {
       return (
         <View style={styles.container}>
           <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
-          <View >
-            <View style={{flexDirection: 'row'}}>
-              <Image
-                  style={styles.ProfileImg} 
-                  source={{uri:`${BASE_API_URL}${profile[0].profile_picture_url}`}}
-              />
-              {/* Full name and Speciality and Info*/}
-              <View style={{marginLeft: 15}}>
-                <View style={style.nameContainer}>
-                    <Text style={styles.FullName}>{info.first_name} {info.last_name}</Text> 
+            <View >
+              <View style={{flexDirection: 'row'}}>
+                <Image
+                    style={styles.ProfileImg} 
+                    source={{uri:`${BASE_API_URL}${profile[0].profile_picture_url}`}}
+                />
+                {/* Full name and Speciality and Info*/}
+                <View style={{marginLeft: 15}}>
+                  <View style={style.nameContainer}>
+                      <Text style={styles.FullName}>{info.first_name} {info.last_name}</Text> 
+                  </View>
+                  <View style={style.nameContainer}>
+                      <Text style={styles.SpName}> {speciality} </Text> 
+                  </View>
+                  <View style={styles.row }>
+                    <Icon name="flag" color={colors.primary_dark} size={30} />
+                    <Text>    {profile[0].price} {profile[0].currency=='USD' ? '$' : 'L.L.'}/hr    </Text>
+                    <Text>{rating}</Text>
+                  <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
+                  </View>
                 </View>
-                <View style={style.nameContainer}>
-                    <Text style={styles.SpName}> {speciality} </Text> 
-                </View>
-                <View style={styles.row }>
-                  <Icon name="flag" color={colors.primary_dark} size={30} />
-                  <Text>    {profile[0].price} {profile[0].currency=='USD' ? '$' : 'L.L.'}/hr    </Text>
-                  <Text>{rating}</Text>
-                 <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
-                </View>
+              </View>
+
+              <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
+              
+                <TouchableOpacity>
+                    <View>
+                      <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
+                    </View>
+                </TouchableOpacity>
+                <View style={styles.VerticleLine}></View>
+
+                {/* allow calling from react native */}
+                <TouchableOpacity>
+                    <View >
+                      <Icon name="phone" color={colors.primary} size={30} onPress={triggerCall} />
+                    </View>
+                </TouchableOpacity>
+                <View style={styles.VerticleLine}></View>
+                
+                <TouchableOpacity onPress={goToCalendar}>
+                  <View>
+                    <Icon name="calendar" color={colors.primary} size={30} />
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
 
-            <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
-             
-              <TouchableOpacity>
-                  <View>
-                    <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
-                  </View>
-              </TouchableOpacity>
-              <View style={styles.VerticleLine}></View>
-
-               {/* allow calling from react native */}
-              <TouchableOpacity>
-                  <View >
-                    <Icon name="phone" color={colors.primary} size={30} onPress={triggerCall} />
-                  </View>
-              </TouchableOpacity>
-              <View style={styles.VerticleLine}></View>
-              
-              <TouchableOpacity onPress={goToCalendar}>
-                <View>
-                  <Icon name="calendar" color={colors.primary} size={30} />
-                </View>
+        
+            <View >
+              <TouchableOpacity  onPress={() => sheetRef.current.snapTo(0)}>
+                <Text style={{fontSize:18, color:'blue'}}>Reviews</Text>
               </TouchableOpacity>
             </View>
-          </View>
 
-       
-          <View >
-            <TouchableOpacity  onPress={() => sheetRef.current.snapTo(0)}>
-              <Text style={{fontSize:18, color:'blue'}}>Reviews</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/*  Specialist's projects */}
-          
-          <View  style={style.proj}>
-            <Text style={style.projText}>Projects</Text>
-          </View>
-          <ScrollView>
-            {projects.map((project, key) => {
-              return(
-                <View key={key}>
-                  <View style={{flexDirection:'row', marginLeft:15, justifyContent:'space-evenly'}}> 
-                    <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>{project.name}</Text>
-                    <TouchableOpacity  onPress ={() => goToProject(project.id)}>
-                      <Icon  name="chevron-double-right" color={colors.text} size={50} />
-                    </TouchableOpacity> 
-                  </View> 
-                </View>
-          )})}
-        </ScrollView>
-
-        {/*  Specialist's Reviews */}
-        <BottomSheet
-          ref={sheetRef}
-          snapPoints={[450, 300, 0]}
-          initialSnap={2}
-          borderRadius={10}
-          renderContent={renderComments}
-        />
-
-        {/* Modal to rate a specilist  */}
-        <View style={style. centeredView}>
-            <Modal
-                animationType='slide'
-                transparent={true}
-                visible={modalRateVisible}
-            >
+            {/*  Specialist's projects */}
             
+            <View  style={style.proj}>
+              <Text style={style.projText}>Projects</Text>
+            </View>
+            <ScrollView>
+              {projects.map((project, key) => {
+                return(
+                  <View key={key}>
+                    <View style={{flexDirection:'row', marginLeft:15, justifyContent:'space-evenly'}}> 
+                      <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>{project.name}</Text>
+                      <TouchableOpacity  onPress ={() => goToProject(project.id)}>
+                        <Icon  name="chevron-double-right" color={colors.text} size={50} />
+                      </TouchableOpacity> 
+                    </View> 
+                  </View>
+            )})}
+          </ScrollView>
+
+          {/*  Specialist's Reviews */}
+          <BottomSheet
+            ref={sheetRef}
+            snapPoints={[450, 300, 0]}
+            initialSnap={2}
+            borderRadius={10}
+            renderContent={renderComments}
+          />
+
+          {/* Modal to rate a specilist  */}
+          <View style={style. centeredView}>
+              <Modal
+                  animationType='slide'
+                  transparent={true}
+                  visible={modalRateVisible}
+              >
                 <View style={[style.centeredView, { marginTop: -200 }]}>
                     {/* title */}
                     <View style={style.modalView}>
@@ -299,13 +298,14 @@ export default function profileSp({navigation, route}) {
                             <Text> Rating and Reviews </Text>
                             <View style={styles.HorizontalLine}></View>
                             <TouchableOpacity
-                                style={{ paddingHorizontal: 4 }}
-                                onPress={() => setModalRateVisible(false)}
+                              style={{ paddingHorizontal: 4 }}
+                              onPress={() => setModalRateVisible(false)}
                             >
-                                <Icon name='close'/>
+                              <Icon name='close'/>
                             </TouchableOpacity>
                         </View>
                         <View>
+
                             {/* rating */}
                             <View>
                               <Rating
@@ -316,6 +316,7 @@ export default function profileSp({navigation, route}) {
                                 style={{ paddingVertical: 10 }}
                               />
                             </View>
+
                             {/* adding a review */}
                             <Text> Add a review:</Text>
                             <TextInput 
@@ -334,19 +335,18 @@ export default function profileSp({navigation, route}) {
                                     text = "save"
                                     onPressFunction = {saveHandler}
                                 />
-          
                             </View>
-                          
                         </View>
                     </View>
                 </View>
-            </Modal>
-        </View>
+              </Modal>
+            </View>
           </ImageBackground>
         </View>
       );
   }
 }
+
 const style = StyleSheet.create({
 
   nameContainer:{
