@@ -133,12 +133,10 @@ export default function addProfile({navigation}) {
           <Text style={{marginLeft:10, fontSize: 15}}>Nationality:</Text>
           <TouchableOpacity>
             <View style={style.box} >
-            
               <CountryPicker
                 onSelect = {(country) => setCountry(country)}
                 withFlag
               />
-              <Icon name="keyboard-arrow-down" size={35} color={colors.black}/>
             </View>
           </TouchableOpacity>
 
@@ -184,6 +182,7 @@ export default function addProfile({navigation}) {
           </View>
 
           <View style={{flexDirection:'row'}}>
+
             <View style={{'flex':0.5}}>
               <Text style={style.attribute}>Price per hour:</Text>
               <View style={style.box}>
@@ -194,7 +193,6 @@ export default function addProfile({navigation}) {
                     onChangeText = {(price) => setPrice(price)}
                 />
               </View>
-              
             </View>
             
            
@@ -214,7 +212,7 @@ export default function addProfile({navigation}) {
 
           </View>
 
-         </ScrollView>
+        </ScrollView>
        
         <View style={{marginTop: 15}}>
           <MyButton 

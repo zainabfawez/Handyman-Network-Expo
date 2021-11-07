@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, CheckBox, View, TextInput, Dimensions, TouchableOpacity, ScrollView, Alert, ToastAndroid } from 'react-native';
+import React, {useState} from 'react';
+import { StyleSheet, Text, CheckBox, View, TextInput, Dimensions, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
 import MyButton from '../../components/MyButton';
 import styles from "../../constants/styles";
-import {colors, shadows} from "../../constants/palette";
+import {colors} from "../../constants/palette";
 import BASE_API_URL from '../../services/BaseUrl';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Entypo';
 import  {registerForPushNotificationsAsync} from '../specialistScreens/notifications'
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -82,8 +82,7 @@ export default function signup({ navigation }) {
         } catch(err) {
           setIdBadCredentials(1);
         }
-      })
-      
+      })     
     }else{
       setIdBadCredentials(1);
     }
@@ -93,101 +92,103 @@ export default function signup({ navigation }) {
    
     <ScrollView >
 
-    <View  style={styles.container}>
-      <View style={style.bigCircle}></View>
-      <View style={style.smallCircle}></View>
-      <View style={style.centerizedView}>
-        <View style={style.authBox}>
-          <Text style={style.loginTitleText}>Register</Text>
-          <View style={style.hr}></View>
-          <View style={style.inputBox}>
-            <Text style={style.inputLabel}>First Name</Text>
-            <TextInput
-              style={style.input}
-              placeholder='First Name *'
-              placeholderTextColor= {colors.disabled_text}
-              onChangeText={(firstName) => setFirstName(firstName)}
-            />
-          </View>
+      <View  style={styles.container}>
+        <View style={style.bigCircle}></View>
+        <View style={style.smallCircle}></View>
+        <View style={style.centerizedView}>
 
-          
-          <View style={style.inputBox}>
-            <Text style={style.inputLabel}>Last Name</Text>
-            <TextInput
-              style={style.input}
-              placeholder='Last Name *'
-              placeholderTextColor= {colors.disabled_text}
-              onChangeText={(lastName) => setLastName(lastName)}
-            />
-          </View>
-          
-          <View style={style.inputBox}>
-            <Text style={style.inputLabel}>Email</Text>
-            <TextInput
-              style={style.input}
-              keyboardType='email-address'
-              textContentType='emailAddress'
-              placeholder='example@mail.com *'
-              placeholderTextColor= {colors.disabled_text}
-              onChangeText={(email) => setEmail(email)}
-            />
-          </View>
-          <View style={style.inputBox}>
-            <Text style={style.inputLabel}>Password</Text>
-            <TextInput
-              style={style.input}
-              secureTextEntry={true}
-              textContentType='password'
-              placeholder='Must have at  least 6 characters *'
-              placeholderTextColor= {colors.disabled_text}
-              onChangeText={(password) => setPassword(password)}
-            />
-          </View>
+          <View style={style.authBox}>
 
-          <View style={style.inputBox}>
-            <Text style={style.inputLabel}>Confirm Password</Text>
-            <TextInput
-              style={style.input}
-              secureTextEntry={true}
-              textContentType='password'
-              placeholder='Confirm Password *'
-              placeholderTextColor= {colors.disabled_text}
-              onChangeText={(cPassword) => setCPassword(cPassword)}
-            />
-          </View>
-          <View style={{ marginTop: 12, width: '100%'}}>
-            <MyButton
-              style={{flex: 0.5}}
-              text = "Get Current Location"
-              onPressFunction={() => onGetLocationPress()}
-            />
-            <View style={[style.checkboxContainer, {flex:0.5}]}>
-            <CheckBox
-              value={isSelected}
-              onValueChange={(isSelected) => setSelection(isSelected)}
-              style={style.checkbox}
-            />
-            <Text style={style.label}>Register as Specialist?</Text>
+            <Text style={style.loginTitleText}>Register</Text>
+            <View style={style.hr}></View>
+
+            <View style={style.inputBox}>
+              <Text style={style.inputLabel}>First Name</Text>
+              <TextInput
+                style={style.input}
+                placeholder='First Name *'
+                placeholderTextColor= {colors.disabled_text}
+                onChangeText={(firstName) => setFirstName(firstName)}
+              />
             </View>
+
+            <View style={style.inputBox}>
+              <Text style={style.inputLabel}>Last Name</Text>
+              <TextInput
+                style={style.input}
+                placeholder='Last Name *'
+                placeholderTextColor= {colors.disabled_text}
+                onChangeText={(lastName) => setLastName(lastName)}
+              />
+            </View>
+            
+            <View style={style.inputBox}>
+              <Text style={style.inputLabel}>Email</Text>
+              <TextInput
+                style={style.input}
+                keyboardType='email-address'
+                textContentType='emailAddress'
+                placeholder='example@mail.com *'
+                placeholderTextColor= {colors.disabled_text}
+                onChangeText={(email) => setEmail(email)}
+              />
+            </View>
+
+            <View style={style.inputBox}>
+              <Text style={style.inputLabel}>Password</Text>
+              <TextInput
+                style={style.input}
+                secureTextEntry={true}
+                textContentType='password'
+                placeholder='Must have at  least 6 characters *'
+                placeholderTextColor= {colors.disabled_text}
+                onChangeText={(password) => setPassword(password)}
+              />
+            </View>
+
+            <View style={style.inputBox}>
+              <Text style={style.inputLabel}>Confirm Password</Text>
+              <TextInput
+                style={style.input}
+                secureTextEntry={true}
+                textContentType='password'
+                placeholder='Confirm Password *'
+                placeholderTextColor= {colors.disabled_text}
+                onChangeText={(cPassword) => setCPassword(cPassword)}
+              />
+            </View>
+
+            <View style={{ marginTop: 12, width: '100%', flexDirection:'row', justifyContent:'space-between'}}>
+              <TouchableOpacity onPress={onGetLocationPress} style={{flex:0.25, marginTop:12, marginLeft:5}} >
+                <Icon name='location' color={colors.red} size = {25}/>
+              </TouchableOpacity>
+              <View style={[style.checkboxContainer, {flex:0.75}]}>
+                <CheckBox
+                  value={isSelected}
+                  onValueChange={(isSelected) => setSelection(isSelected)}
+                  style={style.checkbox}
+                />
+                <Text style={style.label}>Register as Specialist?</Text>
+              </View>
+            </View>
+          
+            <TouchableOpacity style={style.loginButton} onPress = {pressRegister}>
+              <Text style={style.loginButtonText}>Register</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={() => {navigation.navigate('Login'); }}>
+              <Text style={style.registerText}>
+                Have an account? Login Now
+              </Text>
+            </TouchableOpacity>
+          
           </View>
-        
-          <TouchableOpacity style={style.loginButton} onPress = {pressRegister}>
-            <Text style={style.loginButtonText}>Register</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {navigation.navigate('Login'); }}>
-            <Text style={style.registerText}>
-              Have an account? Login Now
-            </Text>
-          </TouchableOpacity>
-        
         </View>
       </View>
-    </View>
   
-  </ScrollView>
-
-    );
-  }
+    </ScrollView>
+  );
+}
 
   const style = StyleSheet.create({
     
