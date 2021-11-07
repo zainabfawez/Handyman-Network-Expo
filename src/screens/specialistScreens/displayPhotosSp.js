@@ -6,6 +6,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loading from '../../components/loading';
 import EmptyState from '../../components/EmptyState';
+import styles from '../../constants/styles';
 
 export default function projectCli({route}) {
 
@@ -37,11 +38,9 @@ export default function projectCli({route}) {
   }else{
     if (photos == "empty State"){
       return(
-      console.log("empty",photos),
       <EmptyState/>
       );
     }else{
-      console.log("not empty",photos)
       return(
         
           <View style={{flex:1}}>

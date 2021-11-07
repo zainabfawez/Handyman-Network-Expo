@@ -6,8 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_API_URL from '../../services/BaseUrl';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../constants/palette';
+import Loading from '../../components/loading';
+import MyButtonDark from '../../components/MyButtonDark';
 
-export default function settingSp({navigation}) {
+export default function settingCli({navigation}) {
 
   const [info, setInfo] = useState(null);
   const [firstName, setFirstName] = useState(null);
@@ -57,65 +59,69 @@ export default function settingSp({navigation}) {
     getUser();
   }, []);
 
-
+  if (!info){
+    return(<Loading/>);
+  }else{
     return (
       <View style={styles.container}>
         <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={style.image}>
         
-          <View style={style.inputBox}>
-              <Text style={style.inputLabel}>First Name</Text>
-              <TextInput
-                value = {info.first_name}
-                style={style.input}
-                placeholder={info.first_name}
-                placeholderTextColor= {colors.text}
-                onChangeText={(firstName) => setFirstName(firstName)}
-              />
-          </View>
-          <View style={styles.HorizontalLine}></View>
-
-          <View style={style.inputBox}>
-              <Text style={style.inputLabel}>Last Name</Text>
-              <TextInput
-                value = {info.last_name}
-                style={style.input}
-                placeholder={info.last_name}
-                placeholderTextColor= {colors.text}
-                onChangeText={(lastName) => setLastName(lastName)}
-              />
-          </View>
-          <View style={styles.HorizontalLine}></View>
-
-          <View style={style.inputBox}>
-              <Text style={style.inputLabel}>E-mail</Text>
-              <TextInput
-                value = {info.email}
-                style={style.input}
-                keyboardType='email-address'
-                textContentType='emailAddress'
-                placeholder={info.email}
-                placeholderTextColor= {colors.text}
-                onChangeText={(email) => setEmail(email)}
-              />
-          </View>
-          <View style={styles.HorizontalLine}></View>
-
-          <MyButtonDark 
-            text =" Edit Changes"
-            onPressFunction = {editChanges}
-          />
-
-          <TouchableOpacity onPress = {logoutHandler}>
-            <View style={{flexDirection: 'row', marginTop:300}}>
-              <Icon name="logout" size={40} color={colors.primary_dark}  />
-              <Text style={{fontSize: 15, fontWeight: 'bold', color: colors.primary_dark, marginTop:8}}>LOGOUT</Text>
+          <View style={{marginVertical:10}}>
+            <View style={style.inputBox}>
+                <Text style={style.inputLabel}>First Name</Text>
+                <TextInput
+                  value = {info.first_name}
+                  style={style.input}
+                  placeholder={info.first_name}
+                  placeholderTextColor= {colors.text}
+                  onChangeText={(firstName) => setFirstName(firstName)}
+                />
             </View>
-          </TouchableOpacity>
-       
+            <View style={styles.HorizontalLine}></View>
+
+            <View style={style.inputBox}>
+                <Text style={style.inputLabel}>Last Name</Text>
+                <TextInput
+                  value = {info.last_name}
+                  style={style.input}
+                  placeholder={info.last_name}
+                  placeholderTextColor= {colors.text}
+                  onChangeText={(lastName) => setLastName(lastName)}
+                />
+            </View>
+            <View style={styles.HorizontalLine}></View>
+
+            <View style={style.inputBox}>
+                <Text style={style.inputLabel}>E-mail</Text>
+                <TextInput
+                  value = {info.email}
+                  style={style.input}
+                  keyboardType='email-address'
+                  textContentType='emailAddress'
+                  placeholder={info.email}
+                  placeholderTextColor= {colors.text}
+                  onChangeText={(email) => setEmail(email)}
+                />
+            </View>
+            <View style={styles.HorizontalLine}></View>
+
+            <MyButtonDark 
+              text =" Edit Changes"
+              onPressFunction = {editChanges}
+            /> 
+
+            <TouchableOpacity onPress = {logoutHandler}>
+              <View style={{flexDirection: 'row', marginTop:250}}>
+                <Icon name="logout" size={40} color={colors.primary_dark}  />
+                <Text style={{fontSize: 15, fontWeight: 'bold', color: colors.primary_dark, marginTop:8}}>LOGOUT</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </ImageBackground>
         </View>
     );
   }
+}
 
   const style = StyleSheet.create({
 

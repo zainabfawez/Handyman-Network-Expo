@@ -47,7 +47,7 @@ export default StyleSheet.create({
     SpName:{
         fontSize : 20,
         color : colors.black, 
-        marginLeft : 12,
+        marginLeft : 10,
       },
     
     backImage: {

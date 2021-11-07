@@ -94,7 +94,7 @@ export default function login({ navigation }) {
                 style={style.input}
                 secureTextEntry={true}
                 textContentType='password'
-                placeholder='Must have at  least 6 characters'
+                placeholder='******'
                 placeholderTextColor= {colors.disabled_text}
                 onChangeText={(password) => setPassword(password)}
               />

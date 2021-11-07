@@ -9,7 +9,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-
 export default function addProjectSp({navigation}) {
 
     const [selectedCurrency, setSelectedCurrency] = useState("USD");
@@ -44,7 +43,7 @@ export default function addProjectSp({navigation}) {
         <View>
          
           <View style={[style.inputBox, {marginTop:10}]}>
-            <Text style={style.inputLabel}>Project's Name</Text>
+            <Text style={style.inputLabel}>Project Name</Text>
             <TextInput
               style={style.input}
               placeholder="Project's Name"
@@ -55,7 +54,7 @@ export default function addProjectSp({navigation}) {
           </View>
 
           <View style={{marginTop:20}}>
-            <Text style={style.inputLabel}>Description</Text>
+            <Text style={style.inputLabel}>Project Description</Text>
             <TextInput
               style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'},]} 
               multiline={true}
@@ -71,7 +70,7 @@ export default function addProjectSp({navigation}) {
               <Text style={style.inputLabel}>Total Cost</Text>
               <TextInput
                 style={style.input}
-                placeholder="TotalCost"
+                placeholder="Total Cost"
                 returnKeyType="next" 
                 placeholderTextColor= {colors.disabled_text}
                 onChangeText={(totalCost) => setTotalCost(totalCost)}

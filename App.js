@@ -34,8 +34,8 @@ function HomeStackScreenCli() {
   return (
     <HomeStackCli.Navigator >
       <HomeStackCli.Screen name="HomeCli" component={homeCli} options={{ headerShown: false,}} />
-      <HomeStackCli.Screen name="ProfileSp" component={profileSp} options={{title: 'Profile'}} />
-      <HomeStackCli.Screen name="projectCli" component={projectCli} options={{title: 'Project'}} />
+      <HomeStackCli.Screen name="ProfileSp" component={profileSp} options={{title: ''}} />
+      <HomeStackCli.Screen name="projectCli" component={projectCli} options={{title: ''}} />
       <HomeStackCli.Screen name="CalendarCli" component={calendarCli} options={{title: 'Book your Appointments'}} />
     </HomeStackCli.Navigator>
   );
@@ -158,8 +158,10 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const [initialRoute, setInitialRoute] = useState(null)
 
+
   useEffect(() => {
-     AsyncStorage.getItem('token')
+    console.disableYellowBox = true,
+    AsyncStorage.getItem('token')
     .then(token => {
       if (token){
         AsyncStorage.getItem('role')
@@ -188,6 +190,7 @@ export default function App() {
     )
   }
   else {
+    
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName = {initialRoute}>

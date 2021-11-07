@@ -81,7 +81,7 @@ export default function calendarCli({navigation,route}) {
         let dates =  responseAppointmentDates.data
         let disabled = {}
         dates.forEach (date => {
-         disabled[date.date] = {disabled: true, disableTouchEvent: true}
+         disabled[date.date] = {selected: true, marked: true, selectedColor: colors.disabled_text}
         })
         setAppointmentDates(disabled);
       }

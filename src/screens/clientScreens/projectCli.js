@@ -59,58 +59,59 @@ export default function projectCli({route}) {
     return (
       <View style={styles.container}>
         <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
-        <View style={{flex:1}}>
-          <Swiper
-            from={1}
-            minDistanceForAction={0.1}
-            controlsProps={{
-              dotsTouchable: true,
-              prevPos: 'left',
-              nextPos: 'right',
-              nextTitle: '>',
-              nextTitleStyle: {  fontSize: 24, fontWeight: '500' },
-              PrevComponent: ({ onPress }) => (
-                <TouchableOpacity onPress={onPress}>
-                  <Text style={{ color: 'white', fontSize: 24, fontWeight: '500' }}>
-                    {'<'}
-                  </Text>
-                </TouchableOpacity>
-              ),
-            }}
-          >
-             { photos != "empty State" && photos.map((photo, key) => {
-                return(
-                  <View style={{flex:1,alignItems:"center",justifyContent:"center"}} key={key}>
-                    <Image source={{uri:`${BASE_API_URL}${photo.photo_url}`}} style = {{height: '70%', width: '100%'}}/>
+          <Text style={{fontSize:20, fontWeight:'bold'}}>{projectDetails[0].name}:</Text>
+          <View style={{flex:1}}>
+            <Swiper
+              from={1}
+              minDistanceForAction={0.1}
+              controlsProps={{
+                dotsTouchable: true,
+                prevPos: 'left',
+                nextPos: 'right',
+                nextTitle: '>',
+                nextTitleStyle: {  fontSize: 24, fontWeight: '500' },
+                PrevComponent: ({ onPress }) => (
+                  <TouchableOpacity onPress={onPress}>
+                    <Text style={{ color: 'white', fontSize: 24, fontWeight: '500' }}>
+                      {'<'}
+                    </Text>
+                  </TouchableOpacity>
+                ),
+              }}
+            >
+              { photos != "empty State" && photos.map((photo, key) => {
+                  return(
+                    <View style={{flex:1,alignItems:"center",justifyContent:"center"}} key={key}>
+                      <Image source={{uri:`${BASE_API_URL}${photo.photo_url}`}} style = {{height: '70%', width: '100%'}}/>
+                    </View>
+                )})}
+
+                {photos == "empty State" && <EmptyState/>}
+            </Swiper>
+          </View>
+          
+              <View>
+                <ScrollView>
+                  <View style={styles.HorizontalLine}></View>
+                  <View style={{padding : 15}}>
+                  
+                    <Text style={{paddingLeft : 10, fontSize : 16,flexWrap: 'wrap'}}>{projectDetails[0].description}</Text>
                   </View>
-              )})}
+                  <View style={styles.HorizontalLine}></View>
+                  <View style={style.row}>
+                    <Icon name="money-bill-wave" color={colors.primary} size={25}/> 
+                    <Text style={{fontSize:18, textAlign:'justify'}}>
+                      {projectDetails[0].total_cost} {projectDetails[0].currency=='USD' ? '$' : 'L.L.'}
+                    </Text>
+                    <View style={styles.VerticleLine}></View>
 
-              {photos == "empty State" && <EmptyState/>}
-          </Swiper>
-        </View>
-        
-            <View>
-              <ScrollView>
-                <View style={styles.HorizontalLine}></View>
-                <View style={{padding : 15}}>
-                  <Text style={{fontSize:20}}>{projectDetails[0].name}:</Text>
-                  <Text style={{paddingLeft : 10, fontSize : 16,flexWrap: 'wrap'}}>{projectDetails[0].description}</Text>
-                </View>
-                <View style={styles.HorizontalLine}></View>
-                <View style={style.row}>
-                  <Icon name="money-bill-wave" color={colors.primary} size={25}/> 
-                  <Text style={{fontSize:18, textAlign:'justify'}}>
-                    {projectDetails[0].total_cost} {projectDetails[0].currency=='USD' ? '$' : 'L.L.'}
-                  </Text>
-                  <View style={styles.VerticleLine}></View>
-
-                  <Icons name="pending-actions" color={colors.primary} size={30}/>
-                  <Text style={{fontSize:18}}>
-                    {projectDetails[0].is_done ? 'Done' : 'In Progress' }
-                  </Text>
-                </View>
-              </ScrollView>
-            </View>
+                    <Icons name="pending-actions" color={colors.primary} size={30}/>
+                    <Text style={{fontSize:18}}>
+                      {projectDetails[0].is_done ? 'Done' : 'In Progress' }
+                    </Text>
+                  </View>
+                </ScrollView>
+              </View>
             </ImageBackground>
     </View>
         

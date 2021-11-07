@@ -11,9 +11,9 @@ export default function DisplayProjects(props) {
         <View style = {style.Container}>
           
                 <TouchableOpacity  onPress={props.onPressFunction}>
-                    <View style={{flexDirection:"row"}} >
-                        <Icon name="image-multiple-outline" size={60} color = {colors.text}/>
-                        <View style={{marginLeft:10}}>
+                    <View style={{flexDirection:"row",}} >
+                        <Icon name="image-multiple-outline" size={60} color = {colors.text} style={{flex:0.25}}/>
+                        <View style={{marginLeft:10, flex:0.75}}>
                             <Text style = {style.name}>{props.name}</Text>
                             <Text style = {style.description} numberOfLines={5}>{props.description}</Text>
                         </View>

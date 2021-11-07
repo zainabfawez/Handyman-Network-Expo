@@ -129,13 +129,14 @@ export default function settingSp({navigation}) {
           />
           <Icon 
             name="image-edit-outline" 
-            size={25} color={colors.link} 
+            size={25} 
+            color={colors.link} 
             style={{marginTop: 110}} 
             onPress = {pickImage}
           />
           <View style={{margin:60}}>
             <TouchableOpacity onPress={uploadPhoto}>
-              <AntDesign name="upload" size={30} />
+              <AntDesign name="upload" size={30}  color={colors.link}   />
             </TouchableOpacity>
           </View>
         </View>

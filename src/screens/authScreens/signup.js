@@ -104,7 +104,7 @@ export default function signup({ navigation }) {
             <Text style={style.inputLabel}>First Name</Text>
             <TextInput
               style={style.input}
-              placeholder='First Name'
+              placeholder='First Name *'
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(firstName) => setFirstName(firstName)}
             />
@@ -112,10 +112,10 @@ export default function signup({ navigation }) {
 
           
           <View style={style.inputBox}>
-            <Text style={style.inputLabel}>Last name</Text>
+            <Text style={style.inputLabel}>Last Name</Text>
             <TextInput
               style={style.input}
-              placeholder='Last Name'
+              placeholder='Last Name *'
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(lastName) => setLastName(lastName)}
             />
@@ -127,7 +127,7 @@ export default function signup({ navigation }) {
               style={style.input}
               keyboardType='email-address'
               textContentType='emailAddress'
-              placeholder='example@mail.com'
+              placeholder='example@mail.com *'
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(email) => setEmail(email)}
             />
@@ -138,7 +138,7 @@ export default function signup({ navigation }) {
               style={style.input}
               secureTextEntry={true}
               textContentType='password'
-              placeholder='Must have at  least 6 characters'
+              placeholder='Must have at  least 6 characters *'
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(password) => setPassword(password)}
             />
@@ -150,7 +150,7 @@ export default function signup({ navigation }) {
               style={style.input}
               secureTextEntry={true}
               textContentType='password'
-              placeholder='Confirm Password'
+              placeholder='Confirm Password *'
               placeholderTextColor= {colors.disabled_text}
               onChangeText={(cPassword) => setCPassword(cPassword)}
             />
@@ -158,7 +158,7 @@ export default function signup({ navigation }) {
           <View style={{ marginTop: 12, width: '100%'}}>
             <MyButton
               style={{flex: 0.5}}
-              text = "Get current Location"
+              text = "Get Current Location"
               onPressFunction={() => onGetLocationPress()}
             />
             <View style={[style.checkboxContainer, {flex:0.5}]}>

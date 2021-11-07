@@ -37,8 +37,6 @@ export default function projectSp({navigation}) {
     try {
       setFullName( await AsyncStorage.getItem('fullName'));
       await AsyncStorage.getItem('user_id')
-      .then((id) => {
-        setId(Number(id))})
     } catch(error) {
       console.log(error);
     }
@@ -187,7 +185,7 @@ export default function projectSp({navigation}) {
             <Text style={style.projText}>Projects</Text>
           </View>
         
-         
+        
             {projects.map((project, key) => {
               return(
                 <DisplayProjects 
@@ -197,6 +195,8 @@ export default function projectSp({navigation}) {
                   onPressFunction = {() =>{ goToPhotos(project.id) }}
                 />
               )})}     
+
+
         </View>
 
         {/* Modal to add a tip */}
@@ -210,7 +210,7 @@ export default function projectSp({navigation}) {
                 <View style={[style.centeredView, { marginTop: -200, }]}>
                     <View style={style.modalView}>
                         <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
-                            <Text> Add a Tip About Your speciality </Text>
+                            <Text>Add a tip about your specialty </Text>
                             <View style={styles.HorizontalLine}></View>
                             <TouchableOpacity
                                 style={{ paddingHorizontal: 4 }}
@@ -223,7 +223,7 @@ export default function projectSp({navigation}) {
                             <TextInput 
                                 style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'},]} 
                                 multiline={true}
-                                placeholder={"You're tip goes here"}
+                                placeholder={"Your tip goes here."}
                                 placeholderTextColor= {colors.disabled_text}
                                 onChangeText={(newTip) => setNewTip(newTip)}
                             />
@@ -244,16 +244,16 @@ export default function projectSp({navigation}) {
             </Modal>
         </View>
 
-        <View style={{flexDirection: "row", justifyContent : "space-around" }}>
+        <View style={{flexDirection: "row", justifyContent : "space-around"}}>
           <View style={{"flex":0.5, margin :15}}>
             <MyButtonDark
-                text = "new Project"
+                text = "New Project"
                 onPressFunction = {() =>{ navigation.navigate('AddNewProject'); }}
             />
           </View>
           <View  style={{"flex":0.5, margin:15}}>
             <MyButtonDark
-              text = "new Tip"
+              text = "New Tip"
               onPressFunction = {() => setModalTipVisible(true)}
             />
         </View>

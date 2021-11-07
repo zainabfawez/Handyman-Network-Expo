@@ -44,19 +44,17 @@ export default function tips() {
         <ScrollView style={style.container}>
           <ImageBackground source={require('../../../assets/Background.jpeg')} resizeMode="cover" style={styles.backImage}>
             <View >
-
               {tips.map((tip, key) => {
                   return(
-                    <Card key={key} style={{paddingLeft: 5}}>
-                    
+                    <Card key={key} style={{   flex: 1, justifyContent: 'center', padding: 20,}}> 
                       <View style={{ flexDirection: 'row' }}>
                         <Image
                           style={{ width: 80, height: 80, borderRadius: 100 }}
                           source={{uri:`${BASE_API_URL}${tip.image}`}}
                         />
-                        <View style={{  marginLeft:5 }}>
+                        <View style={{  marginLeft:5, flex: 2 }}>
                           <Text style={{fontSize: 15, fontWeight: 'bold'}}  >{tip.first_name} {tip.last_name}</Text>
-                          <Text style={{fontSize:15, flexWrap:'wrap', textAlign: "left"}} numberOfLines={5}>{tip.tip}</Text>
+                          <Text style={{fontSize:15, flexWrap:'wrap', textAlign: "left", padding:5}}>{tip.tip}</Text>
                         </View>
                       </View>
                       </Card>

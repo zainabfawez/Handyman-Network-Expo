@@ -216,7 +216,6 @@ export default function profileSp({navigation, route}) {
                       <Text style={styles.SpName}> {speciality} </Text> 
                   </View>
                   <View style={styles.row }>
-                    <Icon name="flag" color={colors.primary_dark} size={30} />
                     <Text>    {profile[0].price} {profile[0].currency=='USD' ? '$' : 'L.L.'}/hr    </Text>
                     <Text>{rating}</Text>
                   <Text> {rating == 'No Rating'? '': <Icon name="star" color={colors.gold} size={20} />} </Text>
@@ -227,7 +226,7 @@ export default function profileSp({navigation, route}) {
               <View style={[{justifyContent:"space-around", paddingLeft: 15, paddingRight: 15, paddingVertical:15},styles.row]}>
               
                 <TouchableOpacity>
-                    <View>
+                    <View style={{marginLeft: 25}}>
                       <Icon name="star" color={colors.gold} size={35} onPress = {() => setModalRateVisible(true)} />
                     </View>
                 </TouchableOpacity>
@@ -242,7 +241,7 @@ export default function profileSp({navigation, route}) {
                 <View style={styles.VerticleLine}></View>
                 
                 <TouchableOpacity onPress={goToCalendar}>
-                  <View>
+                  <View  style={{marginRight: 25}}>
                     <Icon name="calendar" color={colors.primary} size={30} />
                   </View>
                 </TouchableOpacity>
@@ -265,7 +264,7 @@ export default function profileSp({navigation, route}) {
               {projects.map((project, key) => {
                 return(
                   <View key={key}>
-                    <View style={{flexDirection:'row', marginLeft:15, justifyContent:'space-evenly'}}> 
+                    <View style={{flexDirection:'row', justifyContent: 'space-between'}}> 
                       <Text style={[styles.FullName, {fontSize:18, marginRight:25}]}>{project.name}</Text>
                       <TouchableOpacity  onPress ={() => goToProject(project.id)}>
                         <Icon  name="chevron-double-right" color={colors.text} size={50} />
@@ -295,7 +294,7 @@ export default function profileSp({navigation, route}) {
                     {/* title */}
                     <View style={style.modalView}>
                         <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: "space-between"}}>
-                            <Text> Rating and Reviews </Text>
+                            <Text> Rating and Review </Text>
                             <View style={styles.HorizontalLine}></View>
                             <TouchableOpacity
                               style={{ paddingHorizontal: 4 }}
@@ -322,7 +321,7 @@ export default function profileSp({navigation, route}) {
                             <TextInput 
                                 style={[style.input,{height:100, paddingVertical: 10, textAlignVertical: 'top'}]} 
                                 multiline={true}
-                                placeholder={"You're review goes here"}
+                                placeholder={"Your review goes here"}
                                 placeholderTextColor= {colors.disabled_text}
                                 onChangeText={(review) => setNewReview(review)}
                             />

@@ -114,8 +114,8 @@ export default function addProfile({navigation}) {
 
         <ScrollView>
           <View style = {style.title}>
-            <Text style = {style.textTitle}>Welcome to The Handyman Network</Text>
-            <Text style = {style.textSubTitle}>Please Fill These Profile Informations</Text>
+            <Text style = {style.textTitle}>Welcome To The Handyman Network</Text>
+            <Text style = {style.textSubTitle}>Please Fill Your Profile Information</Text>
             <View style= {styles.HorizontalLine}></View>
           </View>
           
@@ -218,7 +218,7 @@ export default function addProfile({navigation}) {
        
         <View style={{marginTop: 15}}>
           <MyButton 
-            text ="Save"  
+            text ="save"  
             onPressFunction = {saveHandler}
           />
         </View>
@@ -232,6 +232,7 @@ const style = StyleSheet.create({
   title: {
     alignItems: 'center',
     justifyContent: 'center', 
+    marginBottom: 5,
   },
   textTitle: {
     fontSize : 20,
