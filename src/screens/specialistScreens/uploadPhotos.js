@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text, Image, ToastAndroid } from 'react-native';
 import MyButtonDark from '../../components/MyButtonDark';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";
@@ -14,6 +14,7 @@ export default function uploadPhotos({navigation, route}) {
 
     const project_id = route.params.projectId;
     const [str, setStr] = useState(null);
+    const [image, setImage] = useState(null);
 
     const pickImage = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -35,6 +36,7 @@ export default function uploadPhotos({navigation, route}) {
         {headers:{
           'Authorization' : `Bearer ${await AsyncStorage.getItem('token')}`
         }});
+        //ToastAndroid.show("Uploaded");
       } catch(err) {
         console.log(err); 
       }
@@ -57,23 +59,32 @@ export default function uploadPhotos({navigation, route}) {
    
     return(
         <View style={styles.container}>
-            
-            <View style={{'flexDirection': 'row'}}>
-              <TouchableOpacity onPress={pickImage}>
-                  <Icon name="add-photo-alternate" size={100} color={colors.text} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={uploadPhoto}>
-                  <Icon name="file-upload" size={100} color={colors.black} />
-              </TouchableOpacity>
-              
-            </View>
-           
-            <View style = {{ width: '100%', marginLeft: 8 }}>
-                <MyButtonDark
-                    text = "save"
-                    onPressFunction =  {saveHandler}
-                />
-            </View>
+
+          <Text style={{fontSize: 20, fontWeight: 'bold'}}> Upload your project photos</Text>
+          <View style={styles.HorizontalLine}></View>
+          
+          <View style={{'flexDirection': 'row'}}>
+            <Text style={{fontSize:15, marginTop:10}}> Choose photo:</Text>
+            <TouchableOpacity onPress={pickImage}>
+                <Icon name="add-photo-alternate" size={50} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          { image && <Image source={{ uri: image }} style={{height: 200, width: '90%'}}/> }
+
+          <View style={{'flexDirection': 'row'}}>
+          <Text style={{fontSize:15, marginTop:10}}> Upload photo:</Text>
+            <TouchableOpacity onPress={uploadPhoto}>
+                <Icon name="file-upload" size={50} color={colors.black} />
+            </TouchableOpacity>
+          </View>
+
+          <View style = {{ width: '100%', marginLeft: 8 }}>
+            <MyButtonDark
+                text = "save photos"
+                onPressFunction =  {saveHandler}
+            />
+          </View>
         </View>
     );
 

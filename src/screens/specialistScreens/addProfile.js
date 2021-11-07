@@ -24,7 +24,6 @@ export default function addProfile({navigation}) {
     const [price, setPrice] = useState(null);
     const [profilePic, setProfilePic] = useState(null);
     const [imageCode, setImageCode] = useState(null);
-    const [allcategories, setAllCategories] = useState(null);
     const [categories, setCategories] = useState(null);
 
     const pickImage = async () => {
@@ -51,7 +50,6 @@ export default function addProfile({navigation}) {
     }
       
     const addNewProfile = async () => {
-      console.log(country.name)
       try{
         const responseProfile = await  axios.post(`${BASE_API_URL}/api/add-profile`,{  
           "phone" : phone,
@@ -67,7 +65,6 @@ export default function addProfile({navigation}) {
       }catch(error){
         console.log(error);
       }
-    
     }
 
     const addNewCategory = async () => {
@@ -81,16 +78,15 @@ export default function addProfile({navigation}) {
       }catch(error){
         console.log(error);
       }
-    
     }
 
     const saveHandler = ()=>{
       addNewCategory();
       addNewProfile();
-      navigation.navigate('BottomTabSp')
+      navigation.navigate('Login')
       navigation.reset({
         index: 0,
-        routes: [{ name: 'BottomTabSp' }],
+        routes: [{ name: 'Login' }],
         });
     }
 
