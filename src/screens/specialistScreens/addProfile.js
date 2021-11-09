@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView, Keyboard, Image } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
 import styles from "../../constants/styles";
 import MyButton from '../../components/MyButton';
 import CountryPicker from 'react-native-country-picker-modal';
@@ -107,116 +107,116 @@ export default function addProfile({navigation}) {
   }else{
     return (
       <View style={styles.container}>
-
-        <ScrollView>
-          <View style = {style.title}>
-            <Text style = {style.textTitle}>Welcome To The Handyman Network</Text>
-            <Text style = {style.textSubTitle}>Please Fill Your Profile Information</Text>
-            <View style= {styles.HorizontalLine}></View>
-          </View>
-          
-          <View style= {styles.HorizontalLine}></View>
-
-          <View style ={[styles.row, {justifyContent: "space-between"}]}>
-            <Text style={{marginLeft:10, fontSize: 15}}>Profile Picture:</Text>
-            <TouchableOpacity onPress={pickImage}>
-              <Icon name="add-photo-alternate" size={50} color={colors.text}/>
-            </TouchableOpacity>
-            {profilePic && <Image source={{ uri: profilePic }} style={styles.ProfileImg}/>}
-          
-          </View>
-          
-          <Text style={{marginLeft:10, fontSize: 15}}>Nationality:</Text>
-          <TouchableOpacity>
-            <View style={style.box} >
-              <CountryPicker
-                onSelect = {(country) => setCountry(country)}
-                withFlag
-              />
-            </View>
-          </TouchableOpacity>
-
-          <Text style= {style.attribute}> Phone:</Text>
-          <View style={style.box}>
-            <TextInput
-                placeholder ="+961########"
-                placeholderTextColor = {colors.disabled_text}
-                onChangeText = {(phone) => setPhone(phone)}
-            />
-          </View>
-
-          <Text style= {style.attribute}> category:</Text>
-          <View >
-            <Picker 
-                style = {{ marginVertical: 10, marginHorizontal:10}}
-                placeholderTextColor = {colors.disabled_text}
-                selectedValue = {category}
-                onValueChange={(itemValue, itemIndex) =>
-                  setCategory(itemValue)}
-              >
-                 { categories && categories.map((category, key) => {
-                   return(
-                    <Picker.Item label={category.name} value={category.name} key={key} />
-                  )})}
-            </Picker>
-          </View>
-
-          <View style= {{justifyContent:'space-between', }}>
-            <Text style= {style.attribute}> Experience (in years):</Text>
-            <View style={{marginTop:5}}>
-            <InputSpinner
-              max={100}
-              min={1}
-              step={1}
-              style={{marginHorizontal:12, marginVertical: 5}}
-              colorMax={"#f04048"}
-              colorMin={colors.primary}
-              value={experience}
-              onChange={(num) => { setExperience(num)}} 
-            />
-            </View>
-          </View>
-
-          <View style={{flexDirection:'row'}}>
-
-            <View style={{'flex':0.5}}>
-              <Text style={style.attribute}>Price per hour:</Text>
-              <View style={style.box}>
-                <TextInput
-                    placeholder="10"
-                    placeholderTextColor= {colors.disabled_text}
-                    keyboardType='numeric'
-                    onChangeText = {(price) => setPrice(price)}
-                />
-              </View>
+        <ImageBackground source={require('../../../assets/Background.jpeg')}  resizeMode="cover"  style={styles.backImage}>
+          <ScrollView>
+            <View style = {style.title}>
+              <Text style = {style.textTitle}>Welcome To The Handyman Network</Text>
+              <Text style = {style.textSubTitle}>Please Fill Your Profile Information</Text>
+              <View style= {styles.HorizontalLine}></View>
             </View>
             
-           
-            <View style={{'flex':0.5 }}>
-              <Text style= {style.attribute}> Currency:</Text>
+            <View style= {styles.HorizontalLine}></View>
+
+            <View style ={[styles.row, {justifyContent: "space-between"}]}>
+              <Text style={{marginLeft:10, fontSize: 15}}>Profile Picture:</Text>
+              <TouchableOpacity onPress={pickImage}>
+                <Icon name="add-photo-alternate" size={50} color={colors.text}/>
+              </TouchableOpacity>
+              {profilePic && <Image source={{ uri: profilePic }} style={styles.ProfileImg}/>}
+            
+            </View>
+            
+            <Text style={{marginLeft:10, fontSize: 15}}>Nationality:</Text>
+            <TouchableOpacity>
+              <View style={style.box} >
+                <CountryPicker
+                  onSelect = {(country) => setCountry(country)}
+                  withFlag
+                />
+              </View>
+            </TouchableOpacity>
+
+            <Text style= {style.attribute}> Phone:</Text>
+            <View style={style.box}>
+              <TextInput
+                  placeholder ="+961########"
+                  placeholderTextColor = {colors.disabled_text}
+                  onChangeText = {(phone) => setPhone(phone)}
+              />
+            </View>
+
+            <Text style= {style.attribute}> category:</Text>
+            <View >
               <Picker 
-                style = {{ marginVertical: 10, marginHorizontal:10}}
-                placeholderTextColor = {colors.disabled_text}
-                selectedValue = {currency}
-                onValueChange={(itemValue, itemIndex) =>
-                  setCurrency(itemValue)}
-              >
-                <Picker.Item label="USD" value="USD" />
-                <Picker.Item label="LBP" value="LBP" />
+                  style = {{ marginVertical: 10, marginHorizontal:10}}
+                  placeholderTextColor = {colors.disabled_text}
+                  selectedValue = {category}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setCategory(itemValue)}
+                >
+                  { categories && categories.map((category, key) => {
+                    return(
+                      <Picker.Item label={category.name} value={category.name} key={key} />
+                    )})}
               </Picker>
             </View>
 
+            <View style= {{justifyContent:'space-between', }}>
+              <Text style= {style.attribute}> Experience (in years):</Text>
+              <View style={{marginTop:5}}>
+              <InputSpinner
+                max={100}
+                min={1}
+                step={1}
+                style={{marginHorizontal:12, marginVertical: 5}}
+                colorMax={"#f04048"}
+                colorMin={colors.primary}
+                value={experience}
+                onChange={(num) => { setExperience(num)}} 
+              />
+              </View>
+            </View>
+
+            <View style={{flexDirection:'row'}}>
+
+              <View style={{'flex':0.5}}>
+                <Text style={style.attribute}>Price per hour:</Text>
+                <View style={style.box}>
+                  <TextInput
+                      placeholder="10"
+                      placeholderTextColor= {colors.disabled_text}
+                      keyboardType='numeric'
+                      onChangeText = {(price) => setPrice(price)}
+                  />
+                </View>
+              </View>
+              
+            
+              <View style={{'flex':0.5 }}>
+                <Text style= {style.attribute}> Currency:</Text>
+                <Picker 
+                  style = {{ marginVertical: 10, marginHorizontal:10}}
+                  placeholderTextColor = {colors.disabled_text}
+                  selectedValue = {currency}
+                  onValueChange={(itemValue, itemIndex) =>
+                    setCurrency(itemValue)}
+                >
+                  <Picker.Item label="USD" value="USD" />
+                  <Picker.Item label="LBP" value="LBP" />
+                </Picker>
+              </View>
+
+            </View>
+
+          </ScrollView>
+        
+          <View style={{marginTop: 15}}>
+            <MyButton 
+              text ="Save"  
+              onPressFunction = {saveHandler}
+            />
           </View>
-
-        </ScrollView>
-       
-        <View style={{marginTop: 15}}>
-          <MyButton 
-            text ="Save"  
-            onPressFunction = {saveHandler}
-          />
-        </View>
-
+        </ImageBackground>
       </View>
     );
   }

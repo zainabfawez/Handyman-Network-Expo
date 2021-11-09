@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Modal, TouchableOpacity, Image, ImageBackground } from 'react-native';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";

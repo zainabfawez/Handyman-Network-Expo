@@ -38,7 +38,6 @@ export default function profileSp({navigation, route}) {
   }
 
   const goToCalendar = (specialist_id)=>{
-    console.log("test");
     navigation.navigate("CalendarCli",{specialist_id:specialist_id})
   }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text,ImageBackground } from 'react-native';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import styles from "../../constants/styles";
 import {colors} from "../../constants/palette";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,8 +27,6 @@ export default function calendarCli({navigation,route}) {
   const specialist_id = route.params.specialist_id;
 
 
-  
-
   const getAvailableDates = async () => {
     try{
       const responseAvailableDates = await  axios.get(`${BASE_API_URL}/api/get-available-dates?specialist_id=${specialist_id}`, 
@@ -44,7 +42,7 @@ export default function calendarCli({navigation,route}) {
          available[date.availableDate] = {selected: true, marked: true, selectedColor: colors.primary}
         })
         setAvailableDates(available);
-    }
+      }
     }catch(error){
       console.log(error);
     }  
@@ -54,23 +52,24 @@ export default function calendarCli({navigation,route}) {
     try{
       const responseAppointmentDate = await  axios.post(`${BASE_API_URL}/api/set-appointment-date`, 
       {
-        "specialist_id": `${specialist_id}`,
+        "specialist_id": {specialist_id},
         "date" : day.dateString
       },
       { headers:{
       'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }});
+      console.log(day.dateString);
+      console.log(responseAppointmentDate.data);
       await sendPushNotification(responseAppointmentDate.data, "A new appointment has been booked", "new Appointment")
       getAppointmentDates();
     }catch(error){
       console.log(error);
     }  
   }
-
   
   const getAppointmentDates = async () => {
     try{
-      const responseAppointmentDates = await  axios.get(`${BASE_API_URL}/api/get-appointment-dates`, 
+      const responseAppointmentDates = await axios.get(`${BASE_API_URL}/api/get-appointment-dates`, 
       { headers:{
         'Authorization' :`Bearer ${await AsyncStorage.getItem('token')}`
       }}); 
@@ -93,7 +92,6 @@ export default function calendarCli({navigation,route}) {
   useEffect(() => {
     getAppointmentDates();
     getAvailableDates();
-   
   }, []);
 
   if(!(appointmentDates && availableDates)){
@@ -110,8 +108,7 @@ export default function calendarCli({navigation,route}) {
               <Text><Icon name="numeric-7-circle" size={25} color={colors.primary}/> available Dates</Text>
               <Text><Icon name="numeric-7-circle" size={25} color={colors.disabled_text}/> Booked dates</Text>
             </Card>
-      
-        
+
           <View style={{marginTop: 20}}>
               <Calendar
               theme={{
@@ -127,7 +124,7 @@ export default function calendarCli({navigation,route}) {
               style={style.Calendar}
               minDate={Date()}
               onDayPress={(day) => {setAppointmentDate(day)}}
-              onDayLongPress={(day) => {console.log('selected day', day)}}
+              //onDayLongPress={(day) => {console.log('selected day', day)}}
               monthFormat={'MMM yyyy'} // http://arshaw.com/xdate/#Formatting
               disableMonthChange={true}
               firstDay={1}    
