@@ -327,11 +327,11 @@ export default function profileSp({navigation, route}) {
                             />
                             <View style={{flexDirection: "row", justifyContent : "space-around"}}>
                                 <MyButtonGray
-                                    text = "cancel"
+                                    text = "Cancel"
                                     onPressFunction = {() => setModalRateVisible(false)}
                                 />
                                 <MyButtonDark
-                                    text = "save"
+                                    text = "Save"
                                     onPressFunction = {saveHandler}
                                 />
                             </View>

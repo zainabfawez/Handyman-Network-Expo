@@ -105,7 +105,7 @@ export default function addProjectSp({navigation}) {
 
         <View style = {{  width: '100%', marginLeft: 8 }}>
           <MyButtonDark
-              text = "save"
+              text = "Save"
               onPressFunction =  {addNewProject}
           />
         </View>

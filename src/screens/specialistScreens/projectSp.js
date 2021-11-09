@@ -229,11 +229,11 @@ export default function projectSp({navigation}) {
                             />
                             <View style={{flexDirection: "row", justifyContent : "space-around"}}>
                                 <MyButtonGray
-                                    text = "cancel"
+                                    text = "Cancel"
                                     onPressFunction = {() => setModalTipVisible(false)}
                                 />
                                 <MyButtonDark
-                                    text = "save"
+                                    text = "Save"
                                     onPressFunction = {addNewTip}  
                                 />
                             </View>   

@@ -212,7 +212,7 @@ export default function addProfile({navigation}) {
        
         <View style={{marginTop: 15}}>
           <MyButton 
-            text ="save"  
+            text ="Save"  
             onPressFunction = {saveHandler}
           />
         </View>
